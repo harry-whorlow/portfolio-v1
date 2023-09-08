@@ -1,54 +1,30 @@
-# Astro Starter Kit: Basics
+# Welcome to My Portfolio Website
 
-```
-npm create astro@latest -- --template basics
-```
+Welcome to my portfolio website, where I showcase my favorite front-end technologies and libraries.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+## About Me
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+I'm Harry, a passionate full-stack developer with a keen eye for design and a love for creating intuitive and user-friendly web experiences.
+Feel free to explore this project and see how I've applied various front-end technologies to create stunning web applications.
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+## Technologies and Libraries
 
-## 🚀 Project Structure
+In this project I have utilized a range of front-end technologies and libraries, including:
 
-Inside of your Astro project, you'll see the following folders and files:
+- HTML5
+- SASS
+- TypeScript
 
-```
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+- Astro
+- GSAP
+- Three.js
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Contact
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+If you'd like to get in touch or collaborate on a project, feel free to reach out to me at [harrywhorlow@gmail.com](mailto:whorlowharry@gmail.com).
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Explore Further
 
-## 🧞 Commands
+You can check out my code repositories on [GitHub](https://github.com/harry-whorlow) and experience the live version of this website at [harrywhorlow.io](http://www.harrywhorlow.io).
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Thanks for visiting, and I look forward to connecting with you!
