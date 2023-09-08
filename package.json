@@ -10,6 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^3.0.10"
+    "astro": "^3.0.10",
+    "gsap": "npm:@gsap/shockingly@^3.12.2",
+    "sass": "^1.66.1",
+    "three": "^0.156.1"
   }
 }
