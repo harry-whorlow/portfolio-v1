@@ -1,11 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Toolbar.astro';
-import Toolbar from '../components/Toolbar.astro';
+import Card from '../components/Toolbar/Toolbar.astro';
+import Toolbar from '../components/Toolbar/Toolbar.astro';
+import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
 ---
 
 <Layout title="Harry Whorlow">
   <main>
+    <CustomCursor />
     <Toolbar />
   </main>
 </Layout>

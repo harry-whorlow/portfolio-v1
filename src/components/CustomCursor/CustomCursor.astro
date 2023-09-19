@@ -1,0 +1,129 @@
+<div id="mouse" class="mouse-trailer"></div>
+<div id="baby-mouse" class="mouse-trailer"></div>
+<style is:global>
+  .mouse-trailer {
+    border-radius: 100%;
+
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    opacity: 0;
+
+    transition: transfrom 500ms ease;
+
+    pointer-events: none;
+
+    z-index: 100;
+  }
+
+  #mouse {
+    height: 20px;
+    width: 20px;
+
+    background-color: #c0c0c0;
+    mix-blend-mode: difference;
+  }
+
+  #baby-mouse {
+    height: 10px;
+    width: 10px;
+
+    background-color: var(--accent-pink);
+  }
+</style>
+
+<script>
+  const mouseTrailer = window.document.getElementById('mouse');
+  const babyMouseTrailer = window.document.getElementById('baby-mouse');
+
+  let pageIsActive = false;
+  let opacity = 0;
+
+  // hover elements
+  document.addEventListener(
+    'mousemove',
+    (e) => {
+      if (!mouseTrailer || !babyMouseTrailer) {
+        return;
+      }
+
+      //
+      // fade in animation
+      //
+
+      const fadeIn = () => {
+        if (opacity < 1) {
+          opacity += 0.1;
+          setTimeout(function () {
+            fadeIn();
+          }, 200);
+        }
+
+        mouseTrailer.style.opacity = opacity.toString();
+        babyMouseTrailer.style.opacity = opacity.toString();
+      };
+
+      if (!pageIsActive) {
+        fadeIn();
+      }
+
+      pageIsActive = true;
+
+      //
+      // mouse trailer animation
+      //
+
+      /* mouse */
+
+      const mouseX = e.clientX - mouseTrailer.offsetWidth / 2;
+      const mouseY = e.clientY - mouseTrailer.offsetHeight / 2;
+
+      mouseTrailer.style.left = `${mouseX}px`;
+      mouseTrailer.style.top = `${mouseY}px`;
+
+      /* baby mouse */
+
+      const babyMouseX = e.clientX - babyMouseTrailer.offsetWidth / 2;
+      const babyMouseTrailery = e.clientY - babyMouseTrailer.offsetHeight / 2;
+
+      const mouseTrailerTrailerkeyFrames = {
+        transform: `translate(${babyMouseX}px, ${babyMouseTrailery}px)`,
+      };
+
+      babyMouseTrailer.animate(mouseTrailerTrailerkeyFrames, {
+        duration: 1500,
+        fill: 'forwards',
+      });
+
+      //
+      // enlarge mouse when hovering
+      //
+
+      const underMouse = document.elementFromPoint(e.clientX, e.clientY);
+
+      if (underMouse && underMouse.classList.contains('actionable')) {
+        const mouseTrailerEnlargekeyFrames = {
+          height: `30px`,
+          width: `30px`,
+        };
+
+        mouseTrailer.animate(mouseTrailerEnlargekeyFrames, {
+          duration: 1500,
+          fill: 'forwards',
+        });
+      } else {
+        const mouseTrailerEnlargekeyFrames = {
+          height: `20px`,
+          width: `20px`,
+        };
+
+        mouseTrailer.animate(mouseTrailerEnlargekeyFrames, {
+          duration: 1500,
+          fill: 'forwards',
+        });
+      }
+    },
+    { passive: true }
+  );
+</script>

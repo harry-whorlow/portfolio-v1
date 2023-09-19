@@ -25,18 +25,27 @@ const { title } = Astro.props;
   :root {
     --main-light-grey: rgb(234, 234, 234);
     --main-dark-grey: rgb(45, 45, 45);
+    --accent-pink: rgb(212, 8, 117);
   }
 
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
+    cursor: none;
   }
 
   body {
     background-color: var(--main-light-grey);
     padding: 1vw;
+
+    &:hover > #mouse-trailer {
+      background-color: 'red';
+    }
   }
+
+  /* fonts */
 
   @font-face {
     font-family: 'termina';
