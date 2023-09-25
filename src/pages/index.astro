@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Toolbar/Toolbar.astro';
+import Logo from '../components/Logo/Logo.astro';
 import Toolbar from '../components/Toolbar/Toolbar.astro';
 import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
 ---
@@ -9,12 +9,20 @@ import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
   <main>
     <CustomCursor />
     <Toolbar />
-  </main>
-</Layout>
 
-<style>
-  main {
-    height: 1000px;
-    overflow: hidden;
-  }
-</style>
+    <Logo />
+  </main>
+
+  <style>
+    main {
+      height: 1000px;
+      width: 100%;
+
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</Layout>
