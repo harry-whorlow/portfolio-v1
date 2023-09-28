@@ -4,4 +4,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://harry-whorlow.github.io',
   base: '/portfolio',
+  server: { port: 1234, host: true },
 });
