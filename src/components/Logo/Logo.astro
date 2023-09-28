@@ -375,6 +375,7 @@
   #cell-15-1 {
     width: 65px;
     left: 10px;
+    background-color: var(--accent-pink);
   }
 
   #cell-15-2 {
@@ -417,25 +418,23 @@
 
 <script>
   import gsap from 'gsap';
+
+  import { getRandomAnimationTime } from './utils/getRandomAnimationTime';
+  import { getRandomStartPosInt } from './utils/getRandomStartPosition';
+  import type { LocationMap } from './utils/getRandomStartPosition';
+
   let timeLine = gsap.timeline();
 
-  const screenWidthHalved = (window.screen.width - 100) / 2;
+  const locationMap: LocationMap = {};
 
-  const getRandomStartPosInt = () => {
-    let position = screenWidthHalved * Math.random();
+  Array.from(document.querySelectorAll<HTMLElement>('.logo-cell')).map((element) => {
+    timeLine.fromTo(`#${element.id}`, { opacity: 0 }, { opacity: 1, duration: getRandomAnimationTime(3, 1) }, 1);
 
-    if (Math.random() >= 0.5) {
-      position = position * -1;
-    }
-
-    return position;
-  };
-
-  const getRandomStartTimeInt = () => {
-    return Math.random() * (3 - 1 + 1) + 1;
-  };
-
-  Array.from(document.querySelectorAll('.logo-cell')).map((element) => {
-    timeLine.fromTo(`#${element.id}`, { x: getRandomStartPosInt() }, { x: 0, duration: getRandomStartTimeInt() }, 1);
+    timeLine.fromTo(
+      `#${element.id}`,
+      { x: getRandomStartPosInt(element, locationMap) },
+      { x: 0, duration: getRandomAnimationTime(3, 1), ease: 'back' },
+      2
+    );
   });
 </script>
