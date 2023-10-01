@@ -1,71 +1,85 @@
+---
+import { getImage } from 'astro:assets';
+import faviconSvgSrc from '../../images/favicon.svg';
+
+const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
+---
+
 <div id="logo-container">
-  <div class="logo-row"></div>
   <div class="logo-row">
     <span class="logo-cell" id="cell-1-1"></span>
     <span class="logo-cell" id="cell-1-2"></span>
+    <span class="logo-cell" id="cell-1-3"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-2-1"></span>
+    <span class="logo-cell" id="cell-2-2"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-3-1"></span>
     <span class="logo-cell" id="cell-3-2"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-4-1"></span>
-    <span class="logo-cell" id="cell-4-2"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-5-1"></span>
+    <span class="logo-cell" id="cell-5-2"></span>
+    <span class="logo-cell" id="cell-5-3"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-6-1"></span>
     <span class="logo-cell" id="cell-6-2"></span>
-    <span class="logo-cell" id="cell-6-3"></span>
-    <span class="logo-cell" id="cell-6-4"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-7-1"></span>
-    <span class="logo-cell" id="cell-7-2"></span>
-    <span class="logo-cell" id="cell-7-3"></span>
-    <span class="logo-cell" id="cell-7-4"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-8-1"></span>
     <span class="logo-cell" id="cell-8-2"></span>
     <span class="logo-cell" id="cell-8-3"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-9-1"></span>
     <span class="logo-cell" id="cell-9-2"></span>
     <span class="logo-cell" id="cell-9-3"></span>
     <span class="logo-cell" id="cell-9-4"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-10-1"></span>
     <span class="logo-cell" id="cell-10-2"></span>
     <span class="logo-cell" id="cell-10-3"></span>
     <span class="logo-cell" id="cell-10-4"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-11-1"></span>
     <span class="logo-cell" id="cell-11-2"></span>
     <span class="logo-cell" id="cell-11-3"></span>
     <span class="logo-cell" id="cell-11-4"></span>
-    <span class="logo-cell" id="cell-11-5"></span>
-    <span class="logo-cell" id="cell-11-6"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-12-1"></span>
     <span class="logo-cell" id="cell-12-2"></span>
     <span class="logo-cell" id="cell-12-3"></span>
     <span class="logo-cell" id="cell-12-4"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-13-1"></span>
     <span class="logo-cell" id="cell-13-2"></span>
-    <span class="logo-cell" id="cell-13-3"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-14-1"></span>
     <span class="logo-cell" id="cell-14-2"></span>
@@ -73,36 +87,107 @@
     <span class="logo-cell" id="cell-14-4"></span>
     <span class="logo-cell" id="cell-14-5"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-15-1"></span>
     <span class="logo-cell" id="cell-15-2"></span>
     <span class="logo-cell" id="cell-15-3"></span>
     <span class="logo-cell" id="cell-15-4"></span>
+    <span class="logo-cell" id="cell-15-5"></span>
   </div>
+
   <div class="logo-row">
     <span class="logo-cell" id="cell-16-1"></span>
     <span class="logo-cell" id="cell-16-2"></span>
     <span class="logo-cell" id="cell-16-3"></span>
     <span class="logo-cell" id="cell-16-4"></span>
     <span class="logo-cell" id="cell-16-5"></span>
+    <span class="logo-cell" id="cell-16-6"></span>
+  </div>
+
+  <div class="logo-row">
+    <span class="logo-cell" id="cell-17-1"></span>
+    <span class="logo-cell" id="cell-17-2"></span>
+    <span class="logo-cell" id="cell-17-3"></span>
+    <span class="logo-cell" id="cell-17-4"></span>
+  </div>
+
+  <div class="logo-row">
+    <span class="logo-cell" id="cell-18-1"></span>
+    <span class="logo-cell" id="cell-18-2"></span>
+    <span class="logo-cell" id="cell-18-3"></span>
+  </div>
+
+  <div class="logo-row">
+    <span class="logo-cell" id="cell-19-1"></span>
+    <span class="logo-cell" id="cell-19-2"></span>
+    <span class="logo-cell" id="cell-19-3"></span>
+  </div>
+
+  <div class="logo-row">
+    <span class="logo-cell" id="cell-20-1"></span>
+    <span class="logo-cell" id="cell-20-2"></span>
+    <span class="logo-cell" id="cell-20-3"></span>
+    <span class="logo-cell" id="cell-20-4"></span>
+    <span class="logo-cell" id="cell-20-5"></span>
+  </div>
+
+  <div class="logo-row">
+    <span class="logo-cell" id="cell-21-1"></span>
+    <span class="logo-cell" id="cell-21-2"></span>
+    <span class="logo-cell" id="cell-21-3"></span>
+    <span class="logo-cell" id="cell-21-4"></span>
+    <span class="logo-cell" id="cell-21-5"></span>
+  </div>
+
+  <div class="logo-row">
+    <span class="logo-cell" id="cell-22-1"></span>
+    <span class="logo-cell" id="cell-22-2"></span>
+    <span class="logo-cell" id="cell-22-3"></span>
+    <span class="logo-cell" id="cell-22-4"></span>
+    <span class="logo-cell" id="cell-22-5"></span>
+  </div>
+
+  <div class="logo-row">
+    <span class="logo-cell" id="cell-23-1"></span>
+    <span class="logo-cell" id="cell-23-2"></span>
+    <span class="logo-cell" id="cell-23-3"></span>
+    <span class="logo-cell" id="cell-23-4"></span>
+    <span class="logo-cell" id="cell-23-5"></span>
+    <span class="logo-cell" id="cell-23-6"></span>
+    <span class="logo-cell" id="cell-23-7"></span>
   </div>
 </div>
 
 <style>
   #logo-container {
-    height: 400px;
-    width: 400px;
+    height: 700px;
+    width: 650px;
 
-    margin-top: 60px;
+    margin-top: 40px;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
   }
 
+  /* left for modification purposes */
+  /* #image {
+    position: absolute;
+    background-image: url('../../images/favicon.svg');
+    background-size: cover;
+    height: 1010px;
+    width: 1010px;
+
+    top: -165px;
+    left: -180px;
+    z-index: 3;
+  } */
+
   .logo-row {
-    width: 600px;
-    height: 15px;
+    width: 100%;
+    height: 20px;
     margin: 5px 0px;
 
     position: relative;
@@ -112,280 +197,264 @@
     background-color: var(--main-dark-grey);
 
     border-radius: 15px;
-    height: 15px;
+    height: 100%;
 
     position: absolute;
+
+    opacity: 0;
   }
 
   /* row one */
 
   #cell-1-1 {
     width: 60px;
-    left: 100px;
+    left: 160px;
   }
 
   #cell-1-2 {
     width: 25px;
-    left: 165px;
+    left: 230px;
+  }
+
+  #cell-1-3 {
+    width: 45px;
+    left: 265px;
   }
 
   /* row two */
 
   #cell-2-1 {
-    width: 50px;
-    left: 140px;
+    width: 70px;
+    left: 200px;
+  }
+
+  #cell-2-2 {
+    width: 30px;
+    left: 280px;
   }
 
   /* row three */
 
   #cell-3-1 {
-    width: 30px;
-    left: 140px;
+    width: 25px;
+    left: 225px;
   }
 
   #cell-3-2 {
-    width: 15px;
-    left: 175px;
+    width: 50px;
+    left: 260px;
   }
 
   /* row four */
 
   #cell-4-1 {
-    width: 15px;
-    left: 140px;
-  }
-
-  #cell-4-2 {
-    width: 30px;
-    left: 160px;
+    width: 85px;
+    left: 225px;
   }
 
   /* row five */
 
   #cell-5-1 {
-    width: 50px;
-    left: 140px;
+    width: 23px;
+    left: 225px;
+  }
+
+  #cell-5-2 {
+    width: 23px;
+    left: 256px;
+  }
+
+  #cell-5-3 {
+    width: 23px;
+    left: 287px;
   }
 
   /* row six */
 
   #cell-6-1 {
-    width: 15px;
-    left: 140px;
+    width: 25px;
+    left: 225px;
   }
 
   #cell-6-2 {
-    width: 30px;
-    left: 160px;
-  }
-
-  #cell-6-3 {
-    width: 25px;
-    left: 220px;
-  }
-
-  #cell-6-4 {
-    width: 55px;
-    left: 270px;
+    width: 50px;
+    left: 260px;
   }
 
   /* row seven */
 
   #cell-7-1 {
-    width: 50px;
-    left: 140px;
-  }
-
-  #cell-7-2 {
-    width: 15px;
-    left: 200px;
-  }
-
-  #cell-7-3 {
-    width: 35px;
-    left: 285px;
-  }
-
-  #cell-7-4 {
-    width: 15px;
-    left: 330px;
+    width: 85px;
+    left: 225px;
   }
 
   /* row eight */
 
   #cell-8-1 {
-    width: 60px;
-    left: 140px;
+    width: 50px;
+    left: 225px;
   }
 
   #cell-8-2 {
-    width: 15px;
-    left: 300px;
+    width: 25px;
+    left: 285px;
   }
 
   #cell-8-3 {
-    width: 30px;
-    left: 320px;
+    width: 100px;
+    left: 400px;
   }
 
   /* row nine */
 
   #cell-9-1 {
-    width: 15px;
-    left: 140px;
+    width: 85px;
+    left: 225px;
   }
 
   #cell-9-2 {
-    width: 32px;
-    left: 160px;
+    width: 40px;
+    left: 355px;
   }
 
   #cell-9-3 {
-    width: 30px;
-    left: 320px;
+    width: 23px;
+    left: 455px;
   }
 
   #cell-9-4 {
-    width: 15px;
-    left: 300px;
+    width: 55px;
+    left: 485px;
   }
 
   /* row ten */
 
   #cell-10-1 {
-    width: 70px;
-    left: 50px;
+    width: 25px;
+    left: 225px;
   }
 
   #cell-10-2 {
     width: 50px;
-    left: 140px;
+    left: 260px;
   }
 
   #cell-10-3 {
-    width: 15px;
-    left: 250px;
+    width: 25px;
+    left: 325px;
   }
 
   #cell-10-4 {
-    width: 50px;
-    left: 300px;
+    width: 70px;
+    left: 490px;
   }
 
   /* row eleven */
 
   #cell-11-1 {
-    width: 20px;
-    left: 30px;
+    width: 50px;
+    left: 225px;
   }
 
   #cell-11-2 {
-    width: 50px;
-    left: 105px;
+    width: 45px;
+    left: 285px;
   }
 
   #cell-11-3 {
     width: 20px;
-    left: 240px;
+    left: 495px;
   }
 
   #cell-11-4 {
-    width: 30px;
-    left: 160px;
-  }
-
-  #cell-11-5 {
-    width: 30px;
-    left: 300px;
-  }
-
-  #cell-11-6 {
-    width: 15px;
-    left: 335px;
+    width: 50px;
+    left: 525px;
   }
 
   /* row twelve */
 
   #cell-12-1 {
-    width: 15px;
-    left: 25px;
+    width: 25px;
+    left: 225px;
   }
 
   #cell-12-2 {
-    width: 50px;
-    left: 140px;
+    width: 55px;
+    left: 260px;
   }
 
   #cell-12-3 {
-    width: 40px;
-    left: 195px;
+    width: 45px;
+    left: 500px;
   }
 
   #cell-12-4 {
-    width: 50px;
-    left: 300px;
+    width: 25px;
+    left: 555px;
   }
 
   /* row thirteen */
 
   #cell-13-1 {
-    width: 15px;
-    left: 140px;
+    width: 85px;
+    left: 225px;
   }
 
   #cell-13-2 {
-    width: 30px;
-    left: 160px;
-  }
-
-  #cell-13-3 {
-    width: 50px;
-    left: 300px;
+    width: 80px;
+    left: 500px;
   }
 
   /* row fourteen */
 
   #cell-14-1 {
-    width: 35px;
-    left: 25px;
+    width: 50px;
+    left: 110px;
   }
 
   #cell-14-2 {
-    width: 30px;
-    left: 140px;
+    width: 25px;
+    left: 225px;
   }
 
   #cell-14-3 {
-    width: 15px;
-    left: 175px;
+    width: 50px;
+    left: 260px;
   }
 
   #cell-14-4 {
-    width: 15px;
-    left: 300px;
+    width: 25px;
+    left: 500px;
   }
 
   #cell-14-5 {
-    width: 30px;
-    left: 320px;
+    width: 45px;
+    left: 535px;
   }
 
   /* row fifteen */
 
   #cell-15-1 {
-    width: 65px;
-    left: 10px;
-    background-color: var(--accent-pink);
+    width: 85px;
+    left: 50px;
   }
 
   #cell-15-2 {
-    width: 50px;
-    left: 140px;
+    width: 100px;
+    left: 145px;
   }
 
   #cell-15-3 {
-    width: 50px;
-    left: 300px;
+    width: 55px;
+    left: 255px;
+  }
+  #cell-15-4 {
+    width: 25px;
+    left: 430px;
+  }
+  #cell-15-5 {
+    width: 80px;
+    left: 500px;
   }
 
   /* row sixteen */
@@ -396,32 +465,234 @@
   }
 
   #cell-16-2 {
-    width: 50px;
-    left: 100px;
+    width: 90px;
+    left: 180px;
   }
 
   #cell-16-3 {
-    width: 70px;
-    left: 155px;
+    width: 30px;
+    left: 280px;
   }
 
   #cell-16-4 {
     width: 50px;
-    left: 270px;
+    left: 390px;
   }
 
   #cell-16-5 {
-    width: 65px;
-    left: 325px;
+    width: 45px;
+    left: 500px;
+  }
+
+  #cell-16-6 {
+    width: 25px;
+    left: 555px;
+  }
+
+  /* row seventeen */
+
+  #cell-17-1 {
+    width: 35px;
+    left: 225px;
+  }
+
+  #cell-17-2 {
+    width: 90px;
+    left: 270px;
+  }
+
+  #cell-17-3 {
+    width: 35px;
+    left: 370px;
+  }
+
+  #cell-17-4 {
+    width: 80px;
+    left: 500px;
+  }
+
+  /* row eighteen */
+
+  #cell-18-1 {
+    width: 50px;
+    left: 225px;
+  }
+
+  #cell-18-2 {
+    width: 25px;
+    left: 285px;
+  }
+
+  #cell-18-3 {
+    width: 80px;
+    left: 500px;
+  }
+
+  /* row nineteen */
+
+  #cell-19-1 {
+    width: 85px;
+    left: 225px;
+  }
+
+  #cell-19-2 {
+    width: 25px;
+    left: 500px;
+  }
+
+  #cell-19-3 {
+    width: 45px;
+    left: 535px;
+  }
+
+  /* row twenty */
+
+  #cell-20-1 {
+    width: 70px;
+    left: 30px;
+
+    background-color: var(--accent-pink);
+  }
+
+  #cell-20-2 {
+    width: 25px;
+    left: 225px;
+  }
+
+  #cell-20-3 {
+    width: 50px;
+    left: 260px;
+  }
+
+  #cell-20-4 {
+    width: 45px;
+    left: 500px;
+  }
+
+  #cell-20-5 {
+    width: 25px;
+    left: 555px;
+  }
+
+  /* row twentyone */
+
+  #cell-21-1 {
+    width: 25px;
+    left: 10px;
+    background-color: var(--accent-pink);
+  }
+
+  #cell-21-2 {
+    width: 70px;
+    left: 45px;
+
+    background-color: var(--accent-pink);
+  }
+
+  #cell-21-3 {
+    width: 85px;
+    left: 225px;
+  }
+
+  #cell-21-4 {
+    width: 45px;
+    left: 500px;
+  }
+
+  #cell-21-5 {
+    width: 25px;
+    left: 555px;
+  }
+
+  /* row twentytwo */
+
+  #cell-22-1 {
+    width: 105px;
+    left: 10px;
+
+    background-color: var(--accent-pink);
+  }
+
+  #cell-22-2 {
+    width: 25px;
+    left: 225px;
+  }
+
+  #cell-22-3 {
+    width: 50px;
+    left: 260px;
+  }
+
+  #cell-22-4 {
+    width: 80px;
+    left: 500px;
+  }
+
+  /* row twentythree */
+
+  #cell-23-1 {
+    width: 25px;
+    left: 30px;
+    background-color: var(--accent-pink);
+  }
+
+  #cell-23-2 {
+    width: 25px;
+    left: 65px;
+
+    background-color: var(--accent-pink);
+  }
+
+  #cell-23-3 {
+    width: 85px;
+    left: 160px;
+  }
+
+  #cell-23-4 {
+    width: 25px;
+    left: 255px;
+  }
+
+  #cell-23-5 {
+    width: 75px;
+    left: 290px;
+  }
+
+  #cell-23-6 {
+    width: 170px;
+    left: 440px;
+  }
+
+  #cell-23-7 {
+    width: 25px;
+    left: 620px;
   }
 </style>
 
 <script>
   import gsap from 'gsap';
 
+  // utils
   import { getRandomAnimationTime } from './utils/getRandomAnimationTime';
   import { getRandomStartPosInt } from './utils/getRandomStartPosition';
+  import { animateDisperseElement } from './utils/animateDisperseElement';
+
+  // types
   import type { LocationMap } from './utils/getRandomStartPosition';
+
+  //
+  /* animation setup */
+  //
+
+  const elements = Array.from(document.querySelectorAll<HTMLElement>('.logo-cell'));
+
+  elements.forEach((element) => {
+    element.dataset.homeX = `${element.getBoundingClientRect().left}`;
+  });
+
+  //
+  /* animates logo on startup */
+  //
 
   let timeLine = gsap.timeline();
 
@@ -437,4 +708,26 @@
       2
     );
   });
+
+  //
+  /* mouse repulse */
+  //
+
+  interface TimelinePipeDict {
+    [key: string]: gsap.QuickToFunc;
+  }
+
+  let timelinePipeDict: TimelinePipeDict = {};
+
+  elements.forEach((element) => {
+    timelinePipeDict[element.id] = gsap.quickTo(`#${element.id}`, 'x', { duration: 0.4, ease: 'power3' });
+  });
+
+  setTimeout(() => {
+    addEventListener('mousemove', (e) => {
+      elements.forEach((element) => {
+        timelinePipeDict[element.id](animateDisperseElement(element, e));
+      });
+    });
+  }, 5000);
 </script>
