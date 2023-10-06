@@ -154,7 +154,7 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
     <span class="logo-cell" id="cell-23-3"></span>
     <span class="logo-cell" id="cell-23-4"></span>
     <span class="logo-cell" id="cell-23-5"></span>
-    <span class="logo-cell" id="cell-23-6"></span>
+    <span class="logo-cell actionable" id="cell-23-6">start</span>
     <span class="logo-cell" id="cell-23-7"></span>
   </div>
 </div>
@@ -661,6 +661,17 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
   #cell-23-6 {
     width: 170px;
     left: 440px;
+
+    color: var(--main-dark-grey);
+
+    font-family: termina;
+    text-align: center;
+
+    transition: color 1s;
+  }
+
+  #cell-23-6:hover {
+    color: var(--accent-pink);
   }
 
   #cell-23-7 {
@@ -726,6 +737,10 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
   setTimeout(() => {
     addEventListener('mousemove', (e) => {
       elements.forEach((element) => {
+        if (element.id === 'cell-23-6') {
+          return;
+        }
+
         timelinePipeDict[element.id](animateDisperseElement(element, e));
       });
     });
