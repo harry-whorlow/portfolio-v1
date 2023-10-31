@@ -1,0 +1,120 @@
+<div id="button-border" class="actionable">
+  <div id="button-background" class="actionable">
+    <p class="contact-text actionable" id="visible-text">CONTACT</p>
+    <p class="contact-text" id="hidden-text">TOKYO</p>
+  </div>
+</div>
+
+<style>
+  p {
+    font-family: neuemachina;
+    font-weight: 400;
+
+    color: var(--main-text-dark);
+  }
+
+  .contact-text {
+    position: absolute;
+    text-align: center;
+
+    color: var(--main-text-dark);
+
+    pointer-events: none;
+  }
+
+  #button-border {
+    width: 136;
+
+    border: solid 1px var(--grey-dark-main);
+    border-radius: 20px;
+    padding: 3px;
+  }
+
+  #button-background {
+    height: 30px;
+    width: 130px;
+
+    border: solid 1px var(--grey-dark-main);
+    border-radius: 20px;
+
+    position: relative;
+
+    transition: 0.5s;
+
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  #visible-text {
+    top: 9px;
+    left: 23px;
+  }
+
+  #hidden-text {
+    font-weight: 400;
+    color: var(--main-text-dark);
+
+    top: 9px;
+    left: 37px;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { SplitText } from 'gsap/all';
+
+  gsap.registerPlugin(SplitText);
+
+  /* button effects*/
+
+  const buttonTargetArea = document.querySelector('#button-border');
+
+  let timeLine = gsap.timeline({ paused: true });
+
+  const visibleTextChildSplit = new SplitText('#visible-text', { type: 'chars' });
+  const hiddenTextChildSplit = new SplitText('#hidden-text', { type: 'chars' });
+
+  timeLine
+    .to(
+      visibleTextChildSplit.chars,
+      {
+        duration: 0.2,
+        y: -50,
+        stagger: 0.03,
+      },
+      0
+    )
+    .from(
+      hiddenTextChildSplit.chars,
+      {
+        duration: 0.2,
+        y: 30,
+        stagger: 0.03,
+      },
+      0
+    )
+    .to(
+      '#button-background',
+      {
+        duration: 0.2,
+        scaleX: 0.8,
+      },
+      0
+    )
+    .to(
+      '#button-border',
+      {
+        duration: 0.2,
+        scaleX: 0.8,
+      },
+      0
+    );
+
+  buttonTargetArea?.addEventListener('mouseenter', function () {
+    timeLine.play();
+  });
+
+  buttonTargetArea?.addEventListener('mouseleave', function () {
+    timeLine.reverse();
+  });
+</script>

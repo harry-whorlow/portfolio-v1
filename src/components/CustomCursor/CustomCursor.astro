@@ -13,8 +13,6 @@
     transition: transfrom 500ms ease;
 
     pointer-events: none;
-
-    z-index: 100;
   }
 
   #mouse {
@@ -23,13 +21,17 @@
 
     background-color: #c0c0c0;
     mix-blend-mode: difference;
+
+    z-index: 100;
   }
 
   #baby-mouse {
     height: 10px;
     width: 10px;
 
-    background-color: var(--accent-pink);
+    background-color: var(--accent-primary);
+
+    z-index: 101;
   }
 </style>
 
@@ -104,8 +106,8 @@
 
       if (underMouse && underMouse.classList.contains('actionable')) {
         const mouseTrailerEnlargekeyFrames = {
-          height: `30px`,
-          width: `30px`,
+          height: `40px`,
+          width: `40px`,
         };
 
         mouseTrailer.animate(mouseTrailerEnlargekeyFrames, {

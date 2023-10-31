@@ -1,28 +1,97 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Logo from '../components/Logo/Logo.astro';
+import GentleGoodNight from '../components/GentleGoodnight/GentleGoodNight.astro';
 import Toolbar from '../components/Toolbar/Toolbar.astro';
 import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
 import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
 ---
 
-<Layout title="Harry Whorlow">
+<Layout title="Projekt Tokyo | Harry Whorlow">
   <main>
-    <CustomCursor />
-    <Toolbar />
+    <div class="layer-container" id="overlay-base">
+      <section class="first-section flex-column-center-center">
+        <Toolbar />
+        <Logo />
+        <!-- <GentleGoodNight /> -->
+      </section>
+      <div class="transition-divider-1"></div>
 
-    <Logo />
+      <section class="second-section"></section>
+    </div>
 
-    <RadarPannel />
+    <div class="layer-container" id="overlay-secondary">
+      <section class="first-section"></section>
+      <div class="transition-divider-1"></div>
+
+      <section class="second-section">
+        <RadarPannel />
+      </section>
+    </div>
   </main>
 
   <style>
     main {
+      position: relative;
+    }
+
+    section {
+      padding: 0 1vw 0 1vw;
+    }
+
+    #overlay-base {
+      background-color: var(--grey-light-main);
+    }
+
+    #overlay-secondary {
+      background-color: var(--grey-dark-main);
+      position: absolute;
+      top: 0;
+
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .layer-container {
+      width: 100%;
+    }
+
+    .transition-divider-1 {
+      height: 50vh;
       width: 100%;
 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      /* background-color: blueviolet; */
+    }
+
+    .first-section {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .second-section {
+      width: 100%;
+      height: 100vh;
     }
   </style>
+
+  <script>
+    import gsap from 'gsap';
+    import ScrollTrigger from 'gsap/ScrollTrigger';
+
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.normalizeScroll(true);
+
+    gsap.to('#overlay-secondary', {
+      opacity: 1,
+      duration: 0.2,
+      scrollTrigger: {
+        trigger: '.transition-divider-1',
+        start: 'top center',
+        end: 'top bottom',
+        toggleActions: 'play none none reverse',
+
+        markers: true,
+      },
+    });
+  </script>
 </Layout>
