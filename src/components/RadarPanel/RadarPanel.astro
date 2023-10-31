@@ -1,20 +1,56 @@
 ---
 const { href, title, body } = Astro.props;
+
+import Terminal from './components/Terminal.astro';
 ---
 
 <div id="radar-container">
   <div id="radar-game">
-    <div id="terminal-container"></div>
+    <Terminal />
+
+    <div class="flex-row-center">
+      <div id="left-top-c" class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div id="right-top-c" class="radar-cell"></div>
+    </div>
+
+    <div class="flex-row-center">
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+    </div>
+
+    <div class="flex-row-center">
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+    </div>
+
+    <div class="flex-row-center">
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+    </div>
+
+    <div class="flex-row-center">
+      <div id="right-bottom-c" class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div class="radar-cell"></div>
+      <div id="left-bottom-c" class="radar-cell"></div>
+    </div>
   </div>
 </div>
 
 <style>
-  #terminal-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-  }
-
   #radar-container {
     margin-top: 50px;
 
@@ -26,101 +62,35 @@ const { href, title, body } = Astro.props;
   }
 
   #radar-game {
-    width: 80vw;
-    height: 100%;
-
     position: relative;
+  }
 
-    background-color: var(--main-dark-grey);
+  .radar-cell {
+    height: 130px;
+    width: 140px;
 
-    border-radius: 20px;
+    background-color: var(--grey-light-main);
 
-    background-size: 16vw 20vh;
-    background-image: linear-gradient(to right, grey 1px, transparent 1px),
-      linear-gradient(to bottom, grey 1px, transparent 1px);
+    /* border: solid 1px var(--grey-dark-main); */
+  }
+
+  #left-top-c {
+    border-radius: 10px 0 0 0;
+  }
+
+  #right-top-c {
+    border-radius: 0 10px 0 0;
+  }
+
+  #left-bottom-c {
+    border-radius: 0 0 10px 0;
+  }
+
+  #right-bottom-c {
+    border-radius: 0 0 0 10px;
   }
 </style>
 
 <script>
   import gsap from 'gsap';
-  import { TextPlugin } from 'gsap/TextPlugin';
-  gsap.registerPlugin(TextPlugin);
-
-  const terminalContainer = document.querySelector<HTMLElement>('#terminal-container');
-  const textTimeLine = gsap.timeline();
-  const cursorTimeline = gsap.timeline();
-
-  const rowData = [
-    { text: 'a berlin based web developer', duration: 2 },
-    { text: 'building full-stack applications that work', duration: 3 },
-    { text: 'occasionally...', duration: 1 },
-    { text: '', duration: 0.25 },
-    { text: 'sudo rm -rf /really-important-project/opt/gitlab/postgress/data/*', duration: 5 },
-    { text: '^c', duration: 0.25 },
-    { text: '^c', duration: 0.25 },
-    { text: '^c', duration: 0.25 },
-    { text: 'shit, wrong terminal!', duration: 0.5 },
-  ];
-
-  const idArray = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
-
-  const addTerminalRow = (row: { text: string; duration: number }, index: number) => {
-    const terminalRow = document.createElement('div');
-    terminalRow.classList.add('terminal-row');
-
-    //creats the terminal $ for this row
-    const terminalDollar = document.createElement('p');
-    terminalDollar.classList.add('terminal-text');
-    const terminalDollarText = document.createTextNode('$');
-    terminalDollar.appendChild(terminalDollarText);
-
-    //creats the text for this row
-    const terminalText = document.createElement('p');
-    terminalText.classList.add('terminal-text');
-    terminalText.setAttribute('id', idArray[index]);
-    terminalText.style.marginLeft = '6px';
-
-    // creats the cursor for this row
-    const textTerminalCursor = document.createElement('p');
-    textTerminalCursor.classList.add('terminal-cursor');
-    textTerminalCursor.setAttribute('id', `cursor-${idArray[index]}`);
-
-    // adds all elements to the row
-    terminalRow.appendChild(terminalDollar);
-    terminalRow.appendChild(terminalText);
-    terminalRow.appendChild(textTerminalCursor);
-
-    //appends to the parent to create full row
-    terminalContainer?.appendChild(terminalRow);
-
-    if (rowData[index - 1]) {
-      cursorTimeline.killTweensOf(`#cursor-${idArray[index - 1]}`).set(`#cursor-${idArray[index - 1]}`, { opacity: 0 });
-    }
-
-    let cursorTl = gsap.timeline();
-    cursorTl.to(`#cursor-${idArray[index]}`, {
-      opacity: 1,
-      duration: 0.5,
-      repeat: -1,
-      yoyo: true,
-      ease: 'power2.inOut',
-    });
-    cursorTimeline.add(cursorTl);
-
-    let textTl = gsap.timeline();
-    textTl.to(`#${idArray[index]}`, { duration: row.duration, text: row.text });
-    textTimeLine.add(textTl);
-  };
-
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-  (async () => {
-    for (let index = 0; index < rowData.length; ++index) {
-      if (index > 0) {
-        await delay(rowData[index - 1].duration * 1000);
-      }
-
-      addTerminalRow(rowData[index], index);
-    }
-  })();
 </script>

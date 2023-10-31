@@ -28,7 +28,7 @@ export const getRandomStartPosInt = (element: HTMLElement, locationMap: Location
 
   const { left: elementLeftPoint, width: elementWidth } = element.getBoundingClientRect();
 
-  let randomPoint = window.screen.width * Math.random();
+  let randomPoint = (window.screen.width - elementWidth) * Math.random();
   let startVector: number;
 
   if (randomPoint > elementLeftPoint) {

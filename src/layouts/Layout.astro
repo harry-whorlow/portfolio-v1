@@ -1,6 +1,7 @@
 ---
 import { getImage } from 'astro:assets';
 import faviconSvgSrc from '../images/favicon.svg';
+import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
 
 const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
 
@@ -22,15 +23,28 @@ const { title } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <CustomCursor />
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <slot />
+      </div>
+    </div>
   </body>
 </html>
 
 <style is:global>
   :root {
-    --main-light-grey: rgb(234, 234, 234);
-    --main-dark-grey: rgb(45, 45, 45);
-    --accent-pink: rgb(212, 8, 117);
+    --grey-dark-main: rgb(31, 33, 36);
+    --grey-dark-light: rgb(40, 43, 48);
+
+    --grey-light-main: rgb(234, 234, 234);
+
+    --main-text-light: rgb(234, 234, 234);
+    --main-text-dark: rgb(31, 33, 36);
+
+    --accent-primary: rgb(60, 134, 147);
+
+    /* --accent-primary: rgb(211, 8, 117); */
   }
 
   * {
@@ -42,18 +56,18 @@ const { title } = Astro.props;
   }
 
   body {
-    background-color: var(--main-light-grey);
-    padding: 1vw;
-
-    &:hover > #mouse-trailer {
-      background-color: 'red';
-    }
+    overflow-x: hidden;
   }
 
+  .actionable {
+    z-index: 50;
+  }
+
+  /* globally availible for dynamic elements */
   .terminal-text {
     font-family: modeseven;
 
-    color: var(--main-light-grey);
+    color: var(--grey-dark-main);
     display: inline-block;
   }
 
@@ -61,13 +75,62 @@ const { title } = Astro.props;
     height: 12px;
     width: 7px;
 
-    background-color: var(--main-light-grey);
+    background-color: var(--grey-dark-main);
 
     display: inline-block;
     opacity: 0;
   }
 
+  /* utility classes */
+
+  .flex-row-center {
+    display: flex;
+    justify-content: center;
+  }
+
+  .flex-row-center-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .flex-column-center {
+    display: flex;
+    direction: column;
+    justify-content: center;
+  }
+
+  .flex-column-center-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
   /* fonts */
+  @font-face {
+    font-family: 'neuemachina';
+    src: url('../../public/fonts/NeueMachi/NeueMachina-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'neuemachina';
+    src: url('../../public/fonts/NeueMachi/NeueMachina-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'neuemachina';
+    src: url('../../public/fonts/NeueMachi/NeueMachina-Ultrabold.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
   @font-face {
     font-family: 'modeseven';
     src: url('../../public/fonts/ModeSeven/Modeseven-L3n5.ttf') format('truetype');
@@ -148,3 +211,19 @@ const { title } = Astro.props;
     font-display: swap;
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import ScrollSmoother from 'gsap/ScrollSmoother';
+
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+  ScrollTrigger.normalizeScroll(true);
+
+  let smoother = ScrollSmoother.create({
+    wrapper: '#smooth-wrapper',
+    content: '#smooth-content',
+    smooth: 2,
+    effects: true,
+  });
+</script>

@@ -1,155 +1,71 @@
 ---
+import ContactButton from './components/ContactButton.astro';
 const { href, title, body } = Astro.props;
 ---
 
 <div id="toolbar-container">
   <div id="name-container">
-    <h1>HARRY WHORLOW</h1>
-    <p id="textEffect">web developer</p>
-  </div>
-
-  <div id="button-border" class="actionable">
-    <div id="button-background" class="actionable">
-      <p class="contact-text actionable" id="visible-text">contact</p>
-      <p class="contact-text" id="hidden-text">me</p>
+    <div id="title-container">
+      <p id="title"></p>
+      <div id="title-cursor"></div>
     </div>
   </div>
+
+  <ContactButton />
 </div>
 
 <style>
-  h1 {
-    font-family: termina;
-    font-weight: 200;
-    font-size: 2.5rem;
-    color: var(--main-dark-grey);
-    display: inline-block;
-  }
-
-  p {
-    font-family: termina;
-    font-weight: 400;
-  }
-
   #toolbar-container {
     display: flex;
     justify-content: space-between;
-    align-items: start;
+    align-items: center;
 
     width: 100%;
-    z-index: 100;
+    z-index: 10;
+
+    padding-top: 20px;
   }
 
   #name-container {
     display: flex;
     flex-direction: column;
     justify-content: right;
-    width: max-content;
   }
 
-  #textEffect {
-    color: var(--main-dark-grey);
-    align-self: flex-end;
-    font-size: 0.5rem;
+  #title {
+    font-family: neuemachina;
+    font-weight: 400;
+
+    color: var(--main-text-main);
+
+    display: inline-block;
   }
 
-  #button-border {
-    border: solid 1px var(--main-dark-grey);
-    border-radius: 20px;
-    padding: 3px;
+  #title-cursor {
+    width: 2px;
+    height: 11px;
 
-    z-index: 5;
-  }
+    margin-left: 2px;
 
-  #button-background {
-    height: 2rem;
-    width: 130px;
+    background-color: var(--main-text-dark);
+    opacity: 0;
 
-    background-color: var(--main-dark-grey);
-    border-radius: 20px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    transition: 0.5s;
-
-    position: relative;
-  }
-
-  #button-background:hover {
-    width: 100px;
-  }
-
-  .contact-text {
-    width: 90px;
-
-    text-align: center;
-
-    color: var(--main-light-grey);
-
-    position: absolute;
-    pointer-events: none;
-  }
-
-  #hidden-text {
-    right: 150px;
+    display: inline-block;
   }
 </style>
 
 <script>
   import gsap from 'gsap';
 
-  type NullableHTMLElement = HTMLElement | null;
+  const titles = ['./PROJEKT-TOKYO', 'HARRY WHORLOW'];
 
-  /* text scramble effects*/
-  const letters = 'abcdefghijklmnopqrstuvwxyz';
-  const textScrambleElement: NullableHTMLElement = document.querySelector('#textEffect');
-  const textScrambleElementText = textScrambleElement?.innerText;
+  gsap.to('#title-cursor', { delay: 5, opacity: 1, repeat: -1, yoyo: true, duration: 0.5 });
 
-  let interval: any = null;
-  let iteration = 0;
-  clearInterval(interval);
+  let timeline = gsap.timeline({ delay: 5, repeat: -1 });
 
-  runTextScramble();
-
-  function runTextScramble() {
-    if (!textScrambleElement || !textScrambleElementText) {
-      return;
-    }
-
-    interval = setInterval(() => {
-      textScrambleElement.innerText = textScrambleElement.innerText
-        .split('')
-        .map((letter, index) => {
-          if (textScrambleElement.innerText && index < iteration) {
-            return textScrambleElementText[index];
-          }
-
-          return letters[Math.floor(Math.random() * 26)];
-        })
-        .join('');
-
-      if (textScrambleElement?.innerText && iteration >= textScrambleElement?.innerText.length) {
-        clearInterval(interval);
-      }
-
-      iteration += 1 / 2;
-    }, 100);
-  }
-
-  /* button effects*/
-  const buttonTargetArea: NullableHTMLElement = document.querySelector('#button-border');
-
-  let timeLine = gsap.timeline({ paused: true });
-
-  timeLine.to(['#visible-text', '#hidden-text'], { duration: 0.5, x: 145 });
-
-  buttonTargetArea?.addEventListener('mouseenter', function () {
-    timeLine.play();
-  });
-
-  buttonTargetArea?.addEventListener('mouseleave', function () {
-    timeLine.reverse();
+  titles.forEach((title) => {
+    let titleTimeline = gsap.timeline({ repeat: 1, yoyo: true, repeatDelay: 1 });
+    titleTimeline.to('#title', { duration: 2, text: title, ease: 'power2' });
+    timeline.add(titleTimeline);
   });
 </script>

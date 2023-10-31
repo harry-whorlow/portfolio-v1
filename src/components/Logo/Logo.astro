@@ -157,6 +157,8 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
     <span class="logo-cell" id="cell-23-6"></span>
     <span class="logo-cell" id="cell-23-7"></span>
   </div>
+
+  <!-- <h1 id="slogan">Full time dreamer, part time developer</h1> -->
 </div>
 
 <style>
@@ -194,16 +196,26 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
   }
 
   .logo-cell {
-    background-color: var(--main-dark-grey);
+    background-color: var(--grey-dark-main);
 
     border-radius: 15px;
     height: 100%;
 
+    z-index: 1;
     position: absolute;
 
     opacity: 0;
   }
 
+  #slogan {
+    position: absolute;
+    font-family: neuemachina;
+    font-size: 100px;
+
+    color: var(--main-text-main);
+  }
+
+  /* cells */
   /* row one */
 
   #cell-1-1 {
@@ -551,7 +563,7 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
     width: 70px;
     left: 30px;
 
-    background-color: var(--accent-pink);
+    background-color: var(--accent-primary);
   }
 
   #cell-20-2 {
@@ -579,14 +591,14 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
   #cell-21-1 {
     width: 25px;
     left: 10px;
-    background-color: var(--accent-pink);
+    background-color: var(--accent-primary);
   }
 
   #cell-21-2 {
     width: 70px;
     left: 45px;
 
-    background-color: var(--accent-pink);
+    background-color: var(--accent-primary);
   }
 
   #cell-21-3 {
@@ -610,7 +622,7 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
     width: 105px;
     left: 10px;
 
-    background-color: var(--accent-pink);
+    background-color: var(--accent-primary);
   }
 
   #cell-22-2 {
@@ -633,14 +645,14 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
   #cell-23-1 {
     width: 25px;
     left: 30px;
-    background-color: var(--accent-pink);
+    background-color: var(--accent-primary);
   }
 
   #cell-23-2 {
     width: 25px;
     left: 65px;
 
-    background-color: var(--accent-pink);
+    background-color: var(--accent-primary);
   }
 
   #cell-23-3 {
