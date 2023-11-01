@@ -1,7 +1,7 @@
 <div id="button-border" class="actionable">
   <div id="button-background" class="actionable">
     <p class="contact-text actionable" id="visible-text">CONTACT</p>
-    <p class="contact-text" id="hidden-text">TOKYO</p>
+    <p class="contact-text" id="hidden-text">NEU</p>
   </div>
 </div>
 
@@ -55,7 +55,7 @@
     color: var(--main-text-dark);
 
     top: 9px;
-    left: 37px;
+    left: 50px;
   }
 </style>
 
@@ -64,6 +64,11 @@
   import { SplitText } from 'gsap/all';
 
   gsap.registerPlugin(SplitText);
+
+  /* load in */
+
+  let animateInTimeline = gsap.timeline();
+  animateInTimeline.fromTo('#button-border', { opacity: 0 }, { opacity: 1, duration: 1 }, 5);
 
   /* button effects*/
 

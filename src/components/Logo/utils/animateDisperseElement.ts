@@ -1,20 +1,19 @@
 function isElementRightOfMouse(element: HTMLElement, event: MouseEvent): boolean {
-  const mouseX = event.clientX;
-  const elementCenterX = element.getBoundingClientRect().left + element.offsetWidth / 2;
+  const mouseX = event.pageX;
+  const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
   return mouseX < elementCenterX;
 }
 function getDistanceToClosestSide(element: HTMLElement, mouse: MouseEvent): number {
-  const rect = element.getBoundingClientRect();
-  const elementX = rect.left;
-  const elementY = rect.top;
-  const elementWidth = rect.width;
-  const elementHeight = rect.height;
+  const elementX = element.offsetLeft;
+  const elementY = element.offsetTop;
+  const elementWidth = element.clientWidth;
+  const elementHeight = element.clientHeight;
 
   const elementCenterX = elementX + elementWidth / 2;
   const elementCenterY = elementY + elementHeight / 2;
 
-  const distanceX = Math.abs(mouse.clientX - elementCenterX);
-  const distanceY = Math.abs(mouse.clientY - elementCenterY);
+  const distanceX = Math.abs(mouse.pageX - elementCenterX);
+  const distanceY = Math.abs(mouse.pageY - elementCenterY);
 
   if (distanceX <= elementWidth / 2 && distanceY <= elementHeight / 2) {
     return 0; // Inside the element
@@ -28,7 +27,7 @@ function getDistanceToClosestSide(element: HTMLElement, mouse: MouseEvent): numb
 }
 
 export const animateDisperseElement = (element: HTMLElement, mouse: MouseEvent) => {
-  const targetDist = 150;
+  const targetDist = 60;
 
   const distanceToTarget = getDistanceToClosestSide(element, mouse);
 
@@ -39,10 +38,10 @@ export const animateDisperseElement = (element: HTMLElement, mouse: MouseEvent) 
       return Math.abs(distanceToTarget - targetDist) * -1;
     }
   } else {
-    const elementLeft = element.getBoundingClientRect().left;
-
-    if (distanceToTarget > targetDist && parseInt(element?.dataset?.homeX as string) != elementLeft) {
-      return parseInt(element?.dataset?.homeX as string) - elementLeft;
-    } else return 0;
+    if (distanceToTarget > targetDist && parseInt(element?.dataset?.homeX as string) != element.offsetLeft) {
+      return parseInt(element?.dataset?.homeX as string) - element.offsetLeft;
+    } else {
+      return 0;
+    }
   }
 };
