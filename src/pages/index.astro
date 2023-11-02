@@ -7,14 +7,16 @@ import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
 import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
 ---
 
-<Layout title="Projekt Tokyo | Harry Whorlow">
+<Layout title="Projekt Neu | Harry Whorlow">
   <main>
     <div class="layer-container" id="overlay-base">
       <section class="first-section flex-column-center-center">
         <Toolbar />
-        <Logo />
-        <!-- <GentleGoodNight /> -->
+        <!-- <Logo /> -->
+        <GentleGoodNight />
+        <div id="first-section-divider-slider"></div>
       </section>
+
       <div class="transition-divider-1"></div>
 
       <section class="second-section"></section>
@@ -58,16 +60,26 @@ import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
 
     .transition-divider-1 {
       height: 50vh;
-      width: 100%;
+      width: 100vw;
 
-      /* background-color: blueviolet; */
+      /* background-color: rgba(0, 0, 0, 0.2); */
     }
 
     .first-section {
       width: 100%;
       height: 100vh;
+      position: relative;
     }
 
+    #first-section-divider-slider {
+      height: 2px;
+      width: 100%;
+
+      background-color: var(--grey-dark-main);
+
+      position: absolute;
+      bottom: 0;
+    }
     .second-section {
       width: 100%;
       height: 100vh;
@@ -89,8 +101,18 @@ import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
         start: 'top center',
         end: 'top bottom',
         toggleActions: 'play none none reverse',
+      },
+    });
 
-        markers: true,
+    gsap.from('#first-section-divider-slider', {
+      x: '-100vw',
+
+      scrollTrigger: {
+        trigger: '.first-section',
+        start: 'top top',
+        end: 'bottom center',
+        toggleActions: 'play none none reverse',
+        scrub: true,
       },
     });
   </script>

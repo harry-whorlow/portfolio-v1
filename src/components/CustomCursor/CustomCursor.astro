@@ -36,11 +36,20 @@
 </style>
 
 <script>
+  import gsap from 'gsap';
+
   const mouseTrailer = window.document.getElementById('mouse');
   const babyMouseTrailer = window.document.getElementById('baby-mouse');
 
   let pageIsActive = false;
-  let opacity = 0;
+  let passedDuration = false;
+  let hasBeenCalled = false;
+
+  setTimeout(() => {
+    passedDuration = true;
+  }, 5000);
+
+  const fadeInTimeline = gsap.timeline({ paused: true }).to('.mouse-trailer', { opacity: 1, duration: 4 });
 
   // hover elements
   document.addEventListener(
@@ -54,23 +63,11 @@
       // fade in animation
       //
 
-      const fadeIn = () => {
-        if (opacity < 1) {
-          opacity += 0.1;
-          setTimeout(function () {
-            fadeIn();
-          }, 200);
-        }
-
-        mouseTrailer.style.opacity = opacity.toString();
-        babyMouseTrailer.style.opacity = opacity.toString();
-      };
-
-      if (!pageIsActive) {
-        fadeIn();
-      }
-
       pageIsActive = true;
+      if (pageIsActive && passedDuration && !hasBeenCalled) {
+        fadeInTimeline.play();
+        hasBeenCalled = true;
+      }
 
       //
       // mouse trailer animation

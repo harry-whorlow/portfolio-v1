@@ -22,7 +22,7 @@ const { title } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body>
+  <body data-overlayscrollbars-initialize>
     <CustomCursor />
     <div id="smooth-wrapper">
       <div id="smooth-content">
@@ -210,12 +210,27 @@ const { title } = Astro.props;
     font-style: normal;
     font-display: swap;
   }
+
+  .os-scrollbar {
+    --os-handle-bg: #c0c0c0;
+    --os-handle-bg-hover: #c0c0c0;
+    --os-handle-max-size: 100px;
+  }
 </style>
 
 <script>
   import gsap from 'gsap';
   import ScrollTrigger from 'gsap/ScrollTrigger';
   import ScrollSmoother from 'gsap/ScrollSmoother';
+
+  import 'overlayscrollbars/overlayscrollbars.css';
+  import { OverlayScrollbars, ScrollbarsHidingPlugin, SizeObserverPlugin, ClickScrollPlugin } from 'overlayscrollbars';
+
+  OverlayScrollbars(document.body, {
+    scrollbars: {
+      theme: 'os-theme-dark',
+    },
+  });
 
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
   ScrollTrigger.normalizeScroll(true);

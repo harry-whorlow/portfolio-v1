@@ -1,0 +1,109 @@
+---
+import { getImage } from 'astro:assets';
+import skyrimSrc from '../../images/skyrim.jpg';
+
+const skyrimjpg = await getImage({ src: skyrimSrc, format: 'jpg' });
+---
+
+<div class="flex-column-center-center goodnight-container">
+  <p id="goodnight-text">
+    あの深い夜の闇，そんなところへおとなしく，入って行ったりしちゃダメだ
+    もう若くなくたって，一日が人生が終わりそうなら，烈火のごとく怒り狂って，ギャアギャアそこで喚くんだ；
+    太陽の光が薄れて消えていっても，死にものぐるいで抵抗しなきゃ
+    <br />
+    <br />
+
+     ちゃんとした大人なら，人生の終わりには死ぬのも自然とわかっているし 自分が何を言ったって，世間があっと驚くような影響なんかありゃしないって，そのことだってわかってるけど
+    あの深い夜の闇，そんなところへおとなしく入って行ったりしちゃダメだ
+    <br />
+    <br />
+
+     そこらにいる善人も，人生の最後の波が来る時に 別に大したことじゃなくても今まで「何か」をやってれば，緑溢れる入り江のとこで今頃は・・って考えて，泣きながら
+    太陽の光が薄れて消えていっても，死にものぐるいで抵抗すんだ
+    <br />
+    <br />
+
+     自由気ままに生きてるヤツも，太陽が空に浮かんでいるうちは，*それを満喫してるから 太陽が思い通りにならないことに気づいた時は，もうとっくに手後れだけど，でも最後まで悔やんでる
+    あの深い夜の闇，そんなところへおとなしく入って行ったりしちゃダメだ
+    <br />
+    <br />
+
+     クソ真面目な人間は，死がそこまで近づくと，物事がやたらにはっきり見えて来る たとえ光は失くしていても，流れ星と同じでその目は明るく輝いていて
+    太陽の光が薄れて消えていっても，死にものぐるいで抵抗すんだ
+    <br />
+    <br />
+
+     だから親父，アンタもそうだ，これ以上ないってくらいすごく悲しい状態だって 派手に涙を流しつつ **，わけもなく俺に当たって逆に安心させてくれ，頼むから
+    あの深い夜の闇，そんなところへおとなしく入って行ったりしちゃダメだ 太陽の光が薄れて消えていっても，死にものぐるいで抵抗しなきゃ
+  </p>
+</div>
+
+<style>
+  .goodnight-container {
+    height: 100%;
+    width: 100%;
+  }
+
+  #goodnight-text {
+    width: 700px;
+
+    font-size: 16px;
+    font-weight: 900;
+
+    margin-bottom: 8px;
+
+    /* color: black; */
+
+    /* background: url('../../images/skyrim.jpg') no-repeat center center;
+    background-size: cover;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text; */
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { SplitText } from 'gsap/all';
+  gsap.registerPlugin(SplitText);
+
+  import { getRandomStartPosInt, type LocationMap } from './utils/getRandomStartPosition';
+  import { animateDisperseElement } from '../Logo/utils/animateDisperseElement';
+  import { getRandomAnimationTime } from '../../utils/getRandomAnimationTime';
+
+  const goodNightChars = new SplitText('#goodnight-text', { type: 'chars' });
+
+  goodNightChars.chars.forEach((element) => {
+    (element as HTMLElement).dataset.homeX = `${(element as HTMLElement).offsetLeft}`;
+  });
+
+  let timeLine = gsap.timeline({ paused: true });
+
+  const locationMap: LocationMap = {};
+
+  goodNightChars.chars.forEach((character) => {
+    let opacityTween = gsap.fromTo(character, { opacity: 0 }, { opacity: 1, duration: getRandomAnimationTime(4, 1) });
+    let charTween = gsap.fromTo(
+      character,
+      { x: getRandomStartPosInt(character as HTMLElement, locationMap) },
+      { x: 0, duration: getRandomAnimationTime(5, 1), ease: 'back' }
+    );
+
+    timeLine.add(charTween, 1);
+    timeLine.add(opacityTween, 1);
+  });
+
+  timeLine.play();
+
+  const quickToArr = goodNightChars.chars.map((element) =>
+    gsap.quickTo(element, 'x', { duration: 0.4, ease: 'power3' })
+  );
+
+  setTimeout(() => {
+    addEventListener('mousemove', (e) => {
+      quickToArr.forEach((quickTo, index) => {
+        quickTo(animateDisperseElement(goodNightChars.chars[index] as HTMLElement, e));
+      });
+    });
+  }, 5000);
+</script>
