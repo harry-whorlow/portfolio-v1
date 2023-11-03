@@ -1,10 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Logo from '../components/Logo/Logo.astro';
 import GentleGoodNight from '../components/GentleGoodnight/GentleGoodNight.astro';
 import Toolbar from '../components/Toolbar/Toolbar.astro';
-import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
-import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
+import TextScroller from '../components/TextScroller/TextScroller.astro';
 ---
 
 <Layout title="Projekt Neu | Harry Whorlow">
@@ -12,22 +10,21 @@ import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
     <div class="layer-container" id="overlay-base">
       <section class="first-section flex-column-center-center">
         <Toolbar />
-        <!-- <Logo /> -->
+
         <GentleGoodNight />
+
         <div id="first-section-divider-slider"></div>
       </section>
-
-      <div class="transition-divider-1"></div>
 
       <section class="second-section"></section>
     </div>
 
     <div class="layer-container" id="overlay-secondary">
+      <div id="static"></div>
       <section class="first-section"></section>
-      <div class="transition-divider-1"></div>
 
       <section class="second-section">
-        <RadarPannel />
+        <TextScroller />
       </section>
     </div>
   </main>
@@ -54,15 +51,27 @@ import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
       z-index: 1;
     }
 
-    .layer-container {
+    #static {
+      position: absolute;
+
+      height: 100%;
       width: 100%;
+
+      background-image: url('../images/noise.gif');
+      background-size: 80px;
+      opacity: 0.1;
+      height: 100%;
+      width: 100%;
+
+      top: 0;
+      left: 0;
+      z-index: 2;
+
+      pointer-events: none;
     }
 
-    .transition-divider-1 {
-      height: 50vh;
-      width: 100vw;
-
-      /* background-color: rgba(0, 0, 0, 0.2); */
+    .layer-container {
+      width: 100%;
     }
 
     .first-section {
@@ -93,17 +102,6 @@ import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
     gsap.registerPlugin(ScrollTrigger);
     ScrollTrigger.normalizeScroll(true);
 
-    gsap.to('#overlay-secondary', {
-      opacity: 1,
-      duration: 0.2,
-      scrollTrigger: {
-        trigger: '.transition-divider-1',
-        start: 'top center',
-        end: 'top bottom',
-        toggleActions: 'play none none reverse',
-      },
-    });
-
     gsap.from('#first-section-divider-slider', {
       x: '-100vw',
 
@@ -113,6 +111,17 @@ import RadarPannel from '../components/RadarPanel/RadarPanel.astro';
         end: 'bottom center',
         toggleActions: 'play none none reverse',
         scrub: true,
+      },
+    });
+
+    gsap.to('#overlay-secondary', {
+      opacity: 1,
+      duration: 0.2,
+      scrollTrigger: {
+        trigger: '.second-section',
+        start: 'top center',
+        end: 'bottom center',
+        toggleActions: 'play none none reverse',
       },
     });
   </script>

@@ -22,6 +22,7 @@ const { title } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
+
   <body data-overlayscrollbars-initialize>
     <CustomCursor />
     <div id="smooth-wrapper">
@@ -31,6 +32,34 @@ const { title } = Astro.props;
     </div>
   </body>
 </html>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  import ScrollSmoother from 'gsap/ScrollSmoother';
+
+  import 'overlayscrollbars/overlayscrollbars.css';
+  import { OverlayScrollbars } from 'overlayscrollbars';
+
+  OverlayScrollbars(document.body, {
+    scrollbars: {
+      theme: 'os-theme-dark',
+    },
+    overflow: {
+      x: 'hidden',
+    },
+  });
+
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+  ScrollTrigger.normalizeScroll(true);
+
+  let smoother = ScrollSmoother.create({
+    wrapper: '#smooth-wrapper',
+    content: '#smooth-content',
+    smooth: 2,
+    effects: true,
+  });
+</script>
 
 <style is:global>
   :root {
@@ -217,28 +246,3 @@ const { title } = Astro.props;
     --os-handle-max-size: 100px;
   }
 </style>
-
-<script>
-  import gsap from 'gsap';
-  import ScrollTrigger from 'gsap/ScrollTrigger';
-  import ScrollSmoother from 'gsap/ScrollSmoother';
-
-  import 'overlayscrollbars/overlayscrollbars.css';
-  import { OverlayScrollbars, ScrollbarsHidingPlugin, SizeObserverPlugin, ClickScrollPlugin } from 'overlayscrollbars';
-
-  OverlayScrollbars(document.body, {
-    scrollbars: {
-      theme: 'os-theme-dark',
-    },
-  });
-
-  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
-  ScrollTrigger.normalizeScroll(true);
-
-  let smoother = ScrollSmoother.create({
-    wrapper: '#smooth-wrapper',
-    content: '#smooth-content',
-    smooth: 2,
-    effects: true,
-  });
-</script>
