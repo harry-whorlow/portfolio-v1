@@ -4,7 +4,7 @@ export interface LocationMap {
   [key: string]: PositionType[];
 }
 
-const isBetween = ({ largerEl, smallerEl }: { largerEl: [number, number]; smallerEl: [number, number] }) => {
+const isBetween = (largerEl: PositionType, smallerEl: PositionType) => {
   const leftBound = smallerEl[0] >= largerEl[0] && smallerEl[0] <= largerEl[1];
   const rightBound = smallerEl[1] >= largerEl[0] && smallerEl[1] <= largerEl[1];
 
@@ -13,13 +13,9 @@ const isBetween = ({ largerEl, smallerEl }: { largerEl: [number, number]; smalle
 
 const checkCellBounds = (newElement: [number, number], existingElement: [number, number]) => {
   if (newElement[1] - newElement[0] > existingElement[1] - existingElement[0]) {
-    // if new element if smaller than old element
-
-    return isBetween({ largerEl: newElement, smallerEl: existingElement });
+    return isBetween(newElement, existingElement);
   } else {
-    // re-ordered so that were comparing the smaller span to larger to save on more maths
-
-    return isBetween({ largerEl: existingElement, smallerEl: newElement });
+    return isBetween(existingElement, newElement);
   }
 };
 
@@ -35,19 +31,13 @@ export const getRandomStartPosInt = (element: HTMLElement, locationMap: Location
 
   const newRandomPosition: PositionType = [randomPoint - 5, randomPoint + element.clientWidth];
 
-  switch (true) {
-    case locationMap[element.offsetTop] == undefined:
-      locationMap[element.offsetTop] = [newRandomPosition];
-      break;
+  const existingPositions = locationMap[element.offsetTop] || [];
+  const overlaps = existingPositions.some((existingPosition) => checkCellBounds(newRandomPosition, existingPosition));
 
-    case locationMap[element.offsetTop].some((existingPosition) =>
-      checkCellBounds(newRandomPosition, existingPosition)
-    ):
-      startVector = getRandomStartPosInt(element, locationMap);
-      break;
-
-    default:
-      locationMap[element.offsetTop] = [...locationMap[element.offsetTop], ...[newRandomPosition]];
+  if (overlaps) {
+    startVector = getRandomStartPosInt(element, locationMap);
+  } else {
+    locationMap[element.offsetTop] = [...existingPositions, newRandomPosition];
   }
 
   return startVector;
