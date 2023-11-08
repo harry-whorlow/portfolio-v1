@@ -31,7 +31,7 @@
 <style>
   .big-text {
     font-size: 100px;
-    font-weight: 900;
+    font-weight: 400;
   }
 
   .small-text {
@@ -67,24 +67,27 @@
   import { horizontalLoop } from '../../utils/textScrollerHelpers';
 
   const scrollingText = gsap.utils.toArray('#big .big-text');
+  const smallScrollingText = gsap.utils.toArray('#small .small-text');
 
-  const tl = horizontalLoop(scrollingText, {
+  // big timeline
+  const BigTl = horizontalLoop(scrollingText, {
+    paused: true,
     repeat: -1,
     speed: 0.5,
   });
 
-  let direction = 1;
-  let t: GSAPTween;
+  let bigDirection = 1;
+  let BigT: GSAPTween;
 
   ScrollTrigger.create({
     trigger: '#overlay-secondary',
     start: 'top top',
     end: 'bottom top',
     onUpdate: (self) => {
-      if (self.direction !== direction) {
-        direction = self.direction;
-        t && t.kill();
-        t = gsap.to(tl, {
+      if (self.direction !== bigDirection) {
+        bigDirection = self.direction;
+        BigT && BigT.kill();
+        BigT = gsap.to(BigTl, {
           duration: 0.3,
           timeScale: self.direction,
         });
@@ -92,8 +95,15 @@
     },
   });
 
-  const smallScrollingText = gsap.utils.toArray('#small .small-text');
+  ScrollTrigger.create({
+    trigger: '.second-section',
+    start: 'top center',
+    end: 'bottom bottom',
+    onEnter: () => BigTl.play(),
+    onLeave: () => BigTl.paused(),
+  });
 
+  //small timeline
   const smallTl = horizontalLoop(smallScrollingText, {
     repeat: -1,
     speed: 1,

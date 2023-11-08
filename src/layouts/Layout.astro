@@ -2,6 +2,7 @@
 import { getImage } from 'astro:assets';
 import faviconSvgSrc from '../images/favicon.svg';
 import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
+import Estd from '../components/Estd/Estd.astro';
 
 const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
 
@@ -25,6 +26,9 @@ const { title } = Astro.props;
 
   <body data-overlayscrollbars-initialize>
     <CustomCursor />
+
+    <Estd />
+
     <div id="smooth-wrapper">
       <div id="smooth-content">
         <slot />
@@ -44,9 +48,6 @@ const { title } = Astro.props;
   OverlayScrollbars(document.body, {
     scrollbars: {
       theme: 'os-theme-dark',
-    },
-    overflow: {
-      x: 'hidden',
     },
   });
 
@@ -112,6 +113,10 @@ const { title } = Astro.props;
 
   /* utility classes */
 
+  .flex-row {
+    display: flex;
+  }
+
   .flex-row-center {
     display: flex;
     justify-content: center;
@@ -122,10 +127,15 @@ const { title } = Astro.props;
     justify-content: center;
     align-items: center;
   }
+  .flex-row-space {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   .flex-column-center {
     display: flex;
-    direction: column;
+    flex-direction: column;
     justify-content: center;
   }
 
@@ -134,6 +144,11 @@ const { title } = Astro.props;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+  }
+
+  .os-scrollbar {
+    --os-handle-bg: #c0c0c0;
+    --os-handle-bg-hover: #c0c0c0;
   }
 
   /* fonts */
@@ -238,11 +253,5 @@ const { title } = Astro.props;
     font-weight: 900;
     font-style: normal;
     font-display: swap;
-  }
-
-  .os-scrollbar {
-    --os-handle-bg: #c0c0c0;
-    --os-handle-bg-hover: #c0c0c0;
-    --os-handle-max-size: 100px;
   }
 </style>
