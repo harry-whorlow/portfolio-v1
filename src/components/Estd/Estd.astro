@@ -1,0 +1,146 @@
+<div id="estd-container" class="flex-column-center">
+  <div class="flex-row estd-row-center">
+    <p class="estd-p estd-label">M&nbsp;</p>
+
+    <div id="estd-minuets-container" class="estd-row">
+      <p class="minuets estd-p estd-split-text"></p>
+    </div>
+  </div>
+
+  <div class="flex-row">
+    <p class="estd-p estd-label">H&nbsp;</p>
+
+    <div id="estd-hours-container" class="estd-row">
+      <p class="hours estd-p estd-split-text"></p>
+    </div>
+  </div>
+
+  <div class="flex-row">
+    <p class="estd-p estd-label">D&nbsp;</p>
+
+    <div id="estd-days-container" class="estd-row">
+      <p class="days estd-p estd-split-text"></p>
+    </div>
+  </div>
+
+  <div class="flex-row">
+    <p class="estd-p">COUNTED</p>
+  </div>
+</div>
+
+<style>
+  #estd-container {
+    position: fixed;
+
+    bottom: 10px;
+    left: 10px;
+
+    z-index: 51;
+    mix-blend-mode: difference;
+
+    opacity: 0;
+  }
+
+  .estd-row {
+    width: 100%;
+    position: relative;
+
+    overflow: hidden;
+  }
+
+  .estd-label {
+    min-width: 18px;
+  }
+</style>
+
+<style is:global>
+  .estd-p {
+    font-family: neuemachina;
+    color: #c0c0c0;
+
+    display: inline-block;
+  }
+
+  .estd-split-text {
+    position: absolute;
+    left: 0;
+  }
+
+  .estd-hidden {
+    top: 20px;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { SplitText } from 'gsap/all';
+  gsap.registerPlugin(SplitText);
+
+  import { returnEstd } from './utils/getDateValues';
+
+  gsap.to('#estd-container', { delay: 5, opacity: 1, duration: 0.5 });
+
+  const { minuets, hours, days } = returnEstd();
+  (document.querySelector('.minuets') as Element).innerHTML = minuets;
+  (document.querySelector('.hours') as Element).innerHTML = hours;
+  (document.querySelector('.days') as Element).innerHTML = days;
+
+  const targetdata = {
+    minuets: { value: minuets, container: document.querySelector('#estd-minuets-container') },
+    hours: { value: hours, container: document.querySelector('#estd-hours-container') },
+    days: { value: days, container: document.querySelector('#estd-days-container') },
+  };
+
+  const animateTime = () => {
+    const currentTime = returnEstd();
+
+    (Object.keys(currentTime) as Array<keyof typeof currentTime>).forEach((timeRange) => {
+      if (currentTime[timeRange] != targetdata[timeRange].value) {
+        const pNode = document.createElement('p');
+        pNode.classList.add(timeRange);
+        pNode.classList.add('estd-hidden');
+        pNode.classList.add('estd-split-text');
+        pNode.classList.add('estd-p');
+
+        const pNodeText = document.createTextNode(currentTime[timeRange]);
+        pNode.appendChild(pNodeText);
+        targetdata[timeRange].container?.appendChild(pNode);
+
+        const cleanUp = () => {
+          targetdata[timeRange].value = currentTime[timeRange];
+          document.querySelectorAll(`.${timeRange}`)[0].remove();
+        };
+
+        gsap
+          .timeline()
+          .to(
+            new SplitText(document.querySelectorAll(`.${timeRange}`)[0], { type: 'chars' }).chars,
+            {
+              duration: 0.5,
+              y: -20,
+              stagger: 0.2,
+            },
+            0
+          )
+          .to(
+            new SplitText(document.querySelectorAll(`.${timeRange}`)[1], { type: 'chars' }).chars,
+            {
+              duration: 0.5,
+              y: -20,
+              stagger: 0.2,
+              onComplete: () => cleanUp(),
+            },
+            0.5
+          );
+      }
+    });
+  };
+
+  setTimeout(
+    () => {
+      animateTime();
+      setInterval(animateTime, 60000);
+    },
+    (60 - new Date().getSeconds()) * 1000
+  );
+</script>

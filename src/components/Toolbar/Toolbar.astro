@@ -56,12 +56,15 @@ const { href, title, body } = Astro.props;
 
 <script>
   import gsap from 'gsap';
+  import TextPlugin from 'gsap/TextPlugin';
+
+  gsap.registerPlugin(TextPlugin);
 
   const titles = ['./PROJEKT-NEU', 'HARRY WHORLOW'];
 
   gsap.to('#title-cursor', { delay: 5, opacity: 1, repeat: -1, yoyo: true, duration: 0.5 });
 
-  let timeline = gsap.timeline({ delay: 5, repeat: -1 });
+  let timeline = gsap.timeline({ delay: 6, repeat: -1 });
 
   titles.forEach((title) => {
     let titleTimeline = gsap.timeline({ repeat: 1, yoyo: true, repeatDelay: 1 });
