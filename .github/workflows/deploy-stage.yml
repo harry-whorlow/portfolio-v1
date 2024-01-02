@@ -23,7 +23,7 @@ jobs:
 
       - name: Replace token in .npmrc
         run: |
-          sed -i "s|//npm.greensock.com/:_authToken=[a-zA-Z0-9]*|//npm.greensock.com/:_authToken=${{ secrets.GSAP_TOKEN }}|" .npmrc
+          sed -i "s/\${GSAP_TOKEN}/${{ secrets.GSAP_TOKEN }}/g" .npmrc
           cat .npmrc
 
       - name: Install, build, and upload your site
