@@ -1,8 +1,12 @@
 ---
 import { getImage } from 'astro:assets';
-import faviconSvgSrc from '../images/favicon.svg';
+
 import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
 import Estd from '../components/Estd/Estd.astro';
+
+import faviconSvgSrc from '../images/favicon.svg';
+
+import '../../public/fonts/index.css';
 
 const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
 
@@ -149,109 +153,5 @@ const { title } = Astro.props;
   .os-scrollbar {
     --os-handle-bg: #c0c0c0;
     --os-handle-bg-hover: #c0c0c0;
-  }
-
-  /* fonts */
-  @font-face {
-    font-family: 'neuemachina';
-    src: url('../../public/fonts/NeueMachi/NeueMachina-Light.otf') format('opentype');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: 'neuemachina';
-    src: url('../../public/fonts/NeueMachi/NeueMachina-Regular.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'neuemachina';
-    src: url('../../public/fonts/NeueMachi/NeueMachina-Ultrabold.otf') format('opentype');
-    font-weight: 900;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'modeseven';
-    src: url('../../public/fonts/ModeSeven/Modeseven-L3n5.ttf') format('truetype');
-
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-Thin.otf') format('opentype');
-    font-weight: 100;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-ExtraLight.otf') format('opentype');
-    font-weight: 200;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-Light.otf') format('opentype');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-Regular.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-Thin.otf') format('opentype');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-Heavy.otf') format('opentype');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-Demi.otf') format('opentype');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-Bold.otf') format('opentype');
-    font-weight: 800;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'termina';
-    src: url('../../public/fonts/Termina/TerminaTest-Black.otf') format('opentype');
-    font-weight: 900;
-    font-style: normal;
-    font-display: swap;
   }
 </style>
