@@ -1,8 +1,5 @@
 ---
-import { getImage } from 'astro:assets';
-import skyrimSrc from '../../images/skyrim.jpg';
 
-const skyrimjpg = await getImage({ src: skyrimSrc, format: 'jpg' });
 ---
 
 <div class="flex-column-center-center goodnight-container">
@@ -54,11 +51,7 @@ const skyrimjpg = await getImage({ src: skyrimSrc, format: 'jpg' });
 
     color: var(--grey-dark-main);
 
-    /* background: url('../../images/skyrim.jpg') no-repeat center center;
-    background-size: cover;
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text; */
+   
   }
 </style>
 
@@ -68,9 +61,9 @@ const skyrimjpg = await getImage({ src: skyrimSrc, format: 'jpg' });
   gsap.registerPlugin(SplitText);
 
   import { getRandomStartPosInt, type LocationMap } from './utils/getRandomStartPosition';
-  import { animateDisperseElement } from '../Logo/utils/animateDisperseElement';
-  import { getRandomAnimationTime } from '../../utils/getRandomAnimationTime';
-
+  import { getRandomAnimationTime } from '../../../utils/random-time.animation';
+  import { animateDisperseElement } from '../../../utils/disperse-elements.animation';
+  
   const goodNightChars = new SplitText('#goodnight-text', { type: 'chars' });
 
   goodNightChars.chars.forEach((element) => {

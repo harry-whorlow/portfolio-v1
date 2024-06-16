@@ -1,12 +1,14 @@
 ---
 import { getImage } from 'astro:assets';
 
-import CustomCursor from '../components/CustomCursor/CustomCursor.astro';
-import Estd from '../components/Estd/Estd.astro';
+import CustomCursor from './components/CustomCursor/CustomCursor.astro';
+import Estd from './components/Estd/Estd.astro';
 
 import faviconSvgSrc from '../images/favicon.svg';
 
 import '../../public/fonts/index.css';
+
+
 
 const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
 
@@ -58,7 +60,7 @@ const { title } = Astro.props;
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
   ScrollTrigger.normalizeScroll(true);
 
-  let smoother = ScrollSmoother.create({
+  ScrollSmoother.create({
     wrapper: '#smooth-wrapper',
     content: '#smooth-content',
     smooth: 2,
@@ -95,24 +97,6 @@ const { title } = Astro.props;
 
   .actionable {
     z-index: 50;
-  }
-
-  /* globally availible for dynamic elements */
-  .terminal-text {
-    font-family: modeseven;
-
-    color: var(--grey-dark-main);
-    display: inline-block;
-  }
-
-  .terminal-cursor {
-    height: 12px;
-    width: 7px;
-
-    background-color: var(--grey-dark-main);
-
-    display: inline-block;
-    opacity: 0;
   }
 
   /* utility classes */
