@@ -21,10 +21,10 @@ In this project I have utilized a range of front-end technologies and libraries,
 
 ## Contact
 
-If you'd like to get in touch or collaborate on a project, feel free to reach out to me at [harrywhorlow@gmail.com](mailto:whorlowharry@gmail.com).
+If you'd like to get in touch or collaborate on a project, feel free to reach out to me at [whorlowharry@gmail.com](mailto:whorlowharry@gmail.com).
 
 ## Explore Further
 
-You can check out my code repositories on [GitHub](https://github.com/harry-whorlow) and experience the live version of this website at [harrywhorlow.io](http://www.harrywhorlow.io).
+You can check out my code repositories on [GitHub](https://github.com/harry-whorlow) and experience the live version of this website at [harry-whorlow.dev](http://www.harry-whorlow.dev).
 
 Thanks for visiting, and I look forward to connecting with you!
