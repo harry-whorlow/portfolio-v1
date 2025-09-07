@@ -3,6 +3,7 @@ function isElementRightOfMouse(element: HTMLElement, event: MouseEvent): boolean
   const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
   return mouseX < elementCenterX;
 }
+
 function getDistanceToClosestSide(element: HTMLElement, mouse: MouseEvent): number {
   const elementX = element.offsetLeft;
   const elementY = element.offsetTop;

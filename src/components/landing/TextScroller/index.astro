@@ -64,10 +64,10 @@
   import ScrollTrigger from 'gsap/ScrollTrigger';
   gsap.registerPlugin(ScrollTrigger);
 
-  import { horizontalLoop } from '../../../utils/textScrollerHelpers';
+  import { horizontalLoop } from '../../../utils/horizontal-loop.helper';
 
-  const scrollingText = gsap.utils.toArray('#big .big-text');
-  const smallScrollingText = gsap.utils.toArray('#small .small-text');
+  const scrollingText = gsap.utils.toArray<Element>('#big .big-text');
+  const smallScrollingText = gsap.utils.toArray<Element>('#small .small-text');
 
   // big timeline
   const BigTl = horizontalLoop(scrollingText, {
