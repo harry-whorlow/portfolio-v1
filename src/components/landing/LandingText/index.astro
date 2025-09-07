@@ -1,0 +1,72 @@
+---
+
+---
+
+<div class="flex-column-center-center landing-container">
+  <p id="landing-text">
+    Our scientific power has outrun our spiritual power. We have guided missiles and misguided men.
+  </p>
+</div>
+
+<style>
+  .landing-container {
+    height: 100%;
+    width: 100%;
+  }
+
+  #landing-text {
+    width: 700px;
+
+    font-size: 16px;
+    font-weight: 400;
+
+    margin-bottom: 8px;
+
+    color: var(--grey-dark-main);
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { SplitText } from 'gsap/all';
+  gsap.registerPlugin(SplitText);
+
+  import { getRandomStartPosInt, type LocationMap } from './utils/getRandomStartPosition';
+  import { getRandomAnimationTime } from '../../../utils/random-time.animation';
+  import { animateDisperseElement } from '../../../utils/disperse-elements.animation';
+
+  const landingCharacters = new SplitText('#landing-text', { type: 'chars' });
+
+  landingCharacters.chars.forEach((element) => {
+    (element as HTMLElement).dataset.homeX = `${(element as HTMLElement).offsetLeft}`;
+  });
+
+  let timeLine = gsap.timeline({ paused: true });
+  const locationMap: LocationMap = {};
+
+  landingCharacters.chars.forEach((character) => {
+    let opacityTween = gsap.fromTo(character, { opacity: 0 }, { opacity: 1, duration: getRandomAnimationTime(4, 1) });
+    let charTween = gsap.fromTo(
+      character,
+      { x: getRandomStartPosInt(character as HTMLElement, locationMap) },
+      { x: 0, duration: getRandomAnimationTime(5, 1), ease: 'back' }
+    );
+
+    timeLine.add(charTween, 1);
+    timeLine.add(opacityTween, 1);
+  });
+
+  timeLine.play();
+
+  const quickToArr = landingCharacters.chars.map((element) =>
+    gsap.quickTo(element, 'x', { duration: 0.4, ease: 'power3' })
+  );
+
+  setTimeout(() => {
+    addEventListener('mousemove', (e) => {
+      quickToArr.forEach((quickTo, index) => {
+        quickTo(animateDisperseElement(landingCharacters.chars[index] as HTMLElement, e));
+      });
+    });
+  }, 6000);
+</script>
