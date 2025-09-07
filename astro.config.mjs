@@ -4,8 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://harry-whorlow.github.io',
-  base: '/portfolio',
+  site: 'https://harry-whorlow.dev',
+  base: '/',
   server: { port: 1234, host: true },
   integrations: [],
 
