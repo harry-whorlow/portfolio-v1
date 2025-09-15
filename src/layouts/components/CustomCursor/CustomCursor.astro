@@ -19,7 +19,7 @@
   }
 
   #mouse {
-    position: relative;
+    position: absolute;
     height: 15px;
     width: 15px;
     z-index: 100;
@@ -46,6 +46,8 @@
   }
 
   #mouse-trailer {
+    position: absolute;
+
     height: 10px;
     width: 10px;
 
@@ -104,23 +106,52 @@
         const actionableXOffset = actionableTarget.getAttribute('actionable-x-offset');
         const actionableYOffset = actionableTarget.getAttribute('actionable-y-offset');
 
-        // base anchor point
+        // use offset point as the reference
         const anchorX = actionableXOffset ? rect.x + parseInt(actionableXOffset) : rect.x;
         const anchorY = actionableYOffset ? rect.y + parseInt(actionableYOffset) : rect.y;
 
-        // calculate distance from mouse to anchor
-        const dx = e.clientX - anchorX;
-        const dy = e.clientY - anchorY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxPull = 10; // maximum magnet offset
 
-        // max pull distance
-        const maxPull = 10;
+        // mouse position relative to rect
+        const localX = e.clientX - rect.left;
+        const localY = e.clientY - rect.top;
 
-        // normalized pull (closer = less offset, further = closer to maxPull)
-        const pullX = (dx / dist) * Math.min(dist, maxPull);
-        const pullY = (dy / dist) * Math.min(dist, maxPull);
+        // anchor position relative to rect
+        const anchorLocalX = anchorX - rect.left;
+        const anchorLocalY = anchorY - rect.top;
 
-        // final "magnetized" position
+        // distances from anchor to edges
+        const leftDist = anchorLocalX;
+        const rightDist = rect.width - anchorLocalX;
+        const topDist = anchorLocalY;
+        const bottomDist = rect.height - anchorLocalY;
+
+        let pullX = 0;
+        let pullY = 0;
+
+        // scale X relative to anchor
+        if (localX < anchorLocalX) {
+          // left side → scale between anchor and left edge
+          const ratio = (localX - anchorLocalX) / leftDist; // ratio in [-1, 0]
+          pullX = ratio * maxPull;
+        } else if (localX > anchorLocalX) {
+          // right side → scale between anchor and right edge
+          const ratio = (localX - anchorLocalX) / rightDist; // ratio in [0, 1]
+          pullX = ratio * maxPull;
+        }
+
+        // scale Y relative to anchor
+        if (localY < anchorLocalY) {
+          // above anchor
+          const ratio = (localY - anchorLocalY) / topDist; // [-1, 0]
+          pullY = ratio * maxPull;
+        } else if (localY > anchorLocalY) {
+          // below anchor
+          const ratio = (localY - anchorLocalY) / bottomDist; // [0, 1]
+          pullY = ratio * maxPull;
+        }
+
+        // final position = anchor + proportional pull
         const finalX = anchorX + pullX - mouseTrailer.offsetWidth / 2;
         const finalY = anchorY + pullY - mouseTrailer.offsetHeight / 2;
 
