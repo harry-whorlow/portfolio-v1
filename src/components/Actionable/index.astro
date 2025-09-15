@@ -1,0 +1,16 @@
+---
+interface Props {
+  xActionableOffset: number;
+  yActionableOffset: number;
+  padding?: number;
+}
+const { xActionableOffset, yActionableOffset, padding } = Astro.props;
+---
+
+<div
+  class="actionable"
+  style={{ ...(padding && { padding: `${padding}px` }) }}
+  actionable-x-offset={padding ? xActionableOffset + padding : xActionableOffset}
+  actionable-y-offset={padding ? yActionableOffset + padding : yActionableOffset}>
+  <slot />
+</div>
