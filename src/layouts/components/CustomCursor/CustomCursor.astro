@@ -61,6 +61,11 @@
 <script>
   import gsap from 'gsap';
 
+  let isMobile = false;
+  if (typeof window !== 'undefined') {
+    isMobile = window.matchMedia('(any-hover: none)').matches;
+  }
+
   const mouse = window.document.getElementById('mouse');
   const mouseTrailer = window.document.getElementById('mouse-trailer');
 
@@ -74,109 +79,111 @@
 
   const fadeInTimeline = gsap.timeline({ paused: true }).to('.mouse-fade-animation', { opacity: 1, duration: 4 });
 
-  // hover elements
-  document.addEventListener(
-    'mousemove',
-    (e) => {
-      if (!mouse || !mouseTrailer) return;
+  if (!isMobile) {
+    // hover elements
+    document.addEventListener(
+      'mousemove',
+      (e) => {
+        if (!mouse || !mouseTrailer) return;
 
-      // fade in
-      pageIsActive = true;
-      if (pageIsActive && passedDuration && !hasBeenCalled) {
-        fadeInTimeline.play();
-        hasBeenCalled = true;
-      }
-
-      // position mouse cross
-      const mouseX = e.clientX - mouse.offsetWidth / 2;
-      const mouseY = e.clientY - mouse.offsetHeight / 2;
-      mouse.style.left = `${mouseX}px`;
-      mouse.style.top = `${mouseY}px`;
-
-      // trailer
-      const babyMouseX = e.clientX - mouseTrailer.offsetWidth / 2;
-      const babyMouseY = e.clientY - mouseTrailer.offsetHeight / 2;
-
-      const underMouse = document.elementFromPoint(e.clientX, e.clientY);
-      const actionableTarget = underMouse ? underMouse.closest('.actionable') : null;
-
-      if (actionableTarget) {
-        const rect = actionableTarget.getBoundingClientRect();
-
-        const actionableXOffset = actionableTarget.getAttribute('actionable-x-offset');
-        const actionableYOffset = actionableTarget.getAttribute('actionable-y-offset');
-
-        // use offset point as the reference
-        const anchorX = actionableXOffset ? rect.x + parseInt(actionableXOffset) : rect.x;
-        const anchorY = actionableYOffset ? rect.y + parseInt(actionableYOffset) : rect.y;
-
-        const maxPull = 10; // maximum magnet offset
-
-        // mouse position relative to rect
-        const localX = e.clientX - rect.left;
-        const localY = e.clientY - rect.top;
-
-        // anchor position relative to rect
-        const anchorLocalX = anchorX - rect.left;
-        const anchorLocalY = anchorY - rect.top;
-
-        // distances from anchor to edges
-        const leftDist = anchorLocalX;
-        const rightDist = rect.width - anchorLocalX;
-        const topDist = anchorLocalY;
-        const bottomDist = rect.height - anchorLocalY;
-
-        let pullX = 0;
-        let pullY = 0;
-
-        // scale X relative to anchor
-        if (localX < anchorLocalX) {
-          // left side → scale between anchor and left edge
-          const ratio = (localX - anchorLocalX) / leftDist; // ratio in [-1, 0]
-          pullX = ratio * maxPull;
-        } else if (localX > anchorLocalX) {
-          // right side → scale between anchor and right edge
-          const ratio = (localX - anchorLocalX) / rightDist; // ratio in [0, 1]
-          pullX = ratio * maxPull;
+        // fade in
+        pageIsActive = true;
+        if (pageIsActive && passedDuration && !hasBeenCalled) {
+          fadeInTimeline.play();
+          hasBeenCalled = true;
         }
 
-        // scale Y relative to anchor
-        if (localY < anchorLocalY) {
-          // above anchor
-          const ratio = (localY - anchorLocalY) / topDist; // [-1, 0]
-          pullY = ratio * maxPull;
-        } else if (localY > anchorLocalY) {
-          // below anchor
-          const ratio = (localY - anchorLocalY) / bottomDist; // [0, 1]
-          pullY = ratio * maxPull;
+        // position mouse cross
+        const mouseX = e.clientX - mouse.offsetWidth / 2;
+        const mouseY = e.clientY - mouse.offsetHeight / 2;
+        mouse.style.left = `${mouseX}px`;
+        mouse.style.top = `${mouseY}px`;
+
+        // trailer
+        const babyMouseX = e.clientX - mouseTrailer.offsetWidth / 2;
+        const babyMouseY = e.clientY - mouseTrailer.offsetHeight / 2;
+
+        const underMouse = document.elementFromPoint(e.clientX, e.clientY);
+        const actionableTarget = underMouse ? underMouse.closest('.actionable') : null;
+
+        if (actionableTarget) {
+          const rect = actionableTarget.getBoundingClientRect();
+
+          const actionableXOffset = actionableTarget.getAttribute('actionable-x-offset');
+          const actionableYOffset = actionableTarget.getAttribute('actionable-y-offset');
+
+          // use offset point as the reference
+          const anchorX = actionableXOffset ? rect.x + parseInt(actionableXOffset) : rect.x;
+          const anchorY = actionableYOffset ? rect.y + parseInt(actionableYOffset) : rect.y;
+
+          const maxPull = 10; // maximum magnet offset
+
+          // mouse position relative to rect
+          const localX = e.clientX - rect.left;
+          const localY = e.clientY - rect.top;
+
+          // anchor position relative to rect
+          const anchorLocalX = anchorX - rect.left;
+          const anchorLocalY = anchorY - rect.top;
+
+          // distances from anchor to edges
+          const leftDist = anchorLocalX;
+          const rightDist = rect.width - anchorLocalX;
+          const topDist = anchorLocalY;
+          const bottomDist = rect.height - anchorLocalY;
+
+          let pullX = 0;
+          let pullY = 0;
+
+          // scale X relative to anchor
+          if (localX < anchorLocalX) {
+            // left side → scale between anchor and left edge
+            const ratio = (localX - anchorLocalX) / leftDist; // ratio in [-1, 0]
+            pullX = ratio * maxPull;
+          } else if (localX > anchorLocalX) {
+            // right side → scale between anchor and right edge
+            const ratio = (localX - anchorLocalX) / rightDist; // ratio in [0, 1]
+            pullX = ratio * maxPull;
+          }
+
+          // scale Y relative to anchor
+          if (localY < anchorLocalY) {
+            // above anchor
+            const ratio = (localY - anchorLocalY) / topDist; // [-1, 0]
+            pullY = ratio * maxPull;
+          } else if (localY > anchorLocalY) {
+            // below anchor
+            const ratio = (localY - anchorLocalY) / bottomDist; // [0, 1]
+            pullY = ratio * maxPull;
+          }
+
+          // final position = anchor + proportional pull
+          const finalX = anchorX + pullX - mouseTrailer.offsetWidth / 2;
+          const finalY = anchorY + pullY - mouseTrailer.offsetHeight / 2;
+
+          mouseTrailer.animate(
+            {
+              transform: `translate(${finalX}px, ${finalY}px)`,
+            },
+            {
+              duration: 500,
+              fill: 'forwards',
+            }
+          );
+        } else {
+          // normal chasing mode
+          mouseTrailer.animate(
+            {
+              transform: `translate(${babyMouseX}px, ${babyMouseY}px)`,
+            },
+            {
+              duration: 1000,
+              fill: 'forwards',
+            }
+          );
         }
-
-        // final position = anchor + proportional pull
-        const finalX = anchorX + pullX - mouseTrailer.offsetWidth / 2;
-        const finalY = anchorY + pullY - mouseTrailer.offsetHeight / 2;
-
-        mouseTrailer.animate(
-          {
-            transform: `translate(${finalX}px, ${finalY}px)`,
-          },
-          {
-            duration: 200,
-            fill: 'forwards',
-          }
-        );
-      } else {
-        // normal chasing mode
-        mouseTrailer.animate(
-          {
-            transform: `translate(${babyMouseX}px, ${babyMouseY}px)`,
-          },
-          {
-            duration: 1000,
-            fill: 'forwards',
-          }
-        );
-      }
-    },
-    { passive: true }
-  );
+      },
+      { passive: true }
+    );
+  }
 </script>
