@@ -1,3 +1,11 @@
+---
+interface Props {
+  animateInCursor?: boolean;
+}
+
+const { animateInCursor } = Astro.props;
+---
+
 <div id="mouse" class="mouse-fade-animation">
   <span id="mouse-vertical"></span>
   <span id="mouse-horizontal"></span>
