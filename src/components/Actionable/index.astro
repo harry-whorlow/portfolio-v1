@@ -3,14 +3,33 @@ interface Props {
   xActionableOffset: number;
   yActionableOffset: number;
   padding?: number;
+  debug?: boolean;
 }
-const { xActionableOffset, yActionableOffset, padding } = Astro.props;
+const { xActionableOffset, yActionableOffset, padding, debug } = Astro.props;
 ---
 
 <div
   class="actionable"
-  style={{ ...(padding && { padding: `${padding}px` }) }}
+  style={{ ...(padding && { padding: `${padding}px` }), ...(debug && { border: 'solid 1px #7E2A2A' }) }}
   actionable-x-offset={padding ? xActionableOffset + padding : xActionableOffset}
   actionable-y-offset={padding ? yActionableOffset + padding : yActionableOffset}>
   <slot />
+
+  {
+    debug && (
+      <div
+        style={{
+          width: '5px',
+          height: '5px',
+
+          border: 'solid 1px #7E2A2A',
+          borderRadius: '100%',
+
+          position: 'absolute',
+          top: `${padding ? yActionableOffset + padding : yActionableOffset}px`,
+          left: `${padding ? xActionableOffset + padding : xActionableOffset}px`,
+        }}
+      />
+    )
+  }
 </div>

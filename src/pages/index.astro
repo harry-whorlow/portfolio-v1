@@ -21,7 +21,7 @@ import LandingText from '../components/landing/LandingText/index.astro';
 
         <section class="second-section"></section>
       </div>
-
+      <!-- 
       <div class="layer-container" id="overlay-secondary">
         <div id="static"></div>
         <section class="first-section"></section>
@@ -29,7 +29,7 @@ import LandingText from '../components/landing/LandingText/index.astro';
         <section class="second-section">
           <TextScroller />
         </section>
-      </div>
+      </div> -->
     </div>
 
     <style>
@@ -127,6 +127,8 @@ import LandingText from '../components/landing/LandingText/index.astro';
           toggleActions: 'play none none reverse',
         },
       });
+
+      window.location.replace('/cv');
     </script>
   </Home>
 </Body>
