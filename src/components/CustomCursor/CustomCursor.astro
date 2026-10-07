@@ -1,15 +1,8 @@
 ---
-interface Props {
-  animateInCursor?: boolean;
-}
-
-const { animateInCursor } = Astro.props;
+interface Props {}
 ---
 
-<div id="mouse" class="mouse-fade-animation">
-  <span id="mouse-vertical"></span>
-  <span id="mouse-horizontal"></span>
-</div>
+<div id="mouse" class="mouse-fade-animation"></div>
 
 <div id="mouse-trailer" class="mouse-fade-animation"></div>
 
@@ -28,29 +21,14 @@ const { animateInCursor } = Astro.props;
 
   #mouse {
     position: absolute;
+
     height: 15px;
     width: 15px;
+
+    border: solid 1px var(--grey-dark-main);
+    border-radius: 100%;
+
     z-index: 100;
-  }
-
-  #mouse-vertical {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 100%;
-    width: 1px;
-    background: var(--grey-dark-main);
-  }
-
-  #mouse-horizontal {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    height: 1px;
-    background: var(--grey-dark-main);
   }
 
   #mouse-trailer {
@@ -87,6 +65,128 @@ const { animateInCursor } = Astro.props;
 
   const fadeInTimeline = gsap.timeline({ paused: true }).to('.mouse-fade-animation', { opacity: 1, duration: 4 });
 
+  const CHASE_SPRING = { stiffness: 90, damping: 7 };
+  const MAGNET_SPRING = { stiffness: 160, damping: 12 };
+  const COLLISION_BOUNCE = 0.6;
+  const MAX_STRETCH = 0.35;
+
+  // all positions are element centres
+  const pointer = { x: 0, y: 0 };
+  const trailer = { x: 0, y: 0, vx: 0, vy: 0 };
+  let magnetTarget: { x: number; y: number } | null = null;
+  let initialised = false;
+  let rafId: number | null = null;
+  let lastTime = 0;
+
+  const getMagnetTarget = (target: Element) => {
+    const rect = target.getBoundingClientRect();
+
+    const actionableXOffset = target.getAttribute('actionable-x-offset');
+    const actionableYOffset = target.getAttribute('actionable-y-offset');
+
+    const anchorX = actionableXOffset ? rect.x + parseInt(actionableXOffset) : rect.x;
+    const anchorY = actionableYOffset ? rect.y + parseInt(actionableYOffset) : rect.y;
+
+    const maxPull = 10;
+
+    // mouse position relative to rect
+    const localX = pointer.x - rect.left;
+    const localY = pointer.y - rect.top;
+
+    // anchor position relative to rect
+    const anchorLocalX = anchorX - rect.left;
+    const anchorLocalY = anchorY - rect.top;
+
+    // distances from anchor to edges
+    const leftDist = anchorLocalX;
+    const rightDist = rect.width - anchorLocalX;
+    const topDist = anchorLocalY;
+    const bottomDist = rect.height - anchorLocalY;
+
+    let pullX = 0;
+    let pullY = 0;
+
+    if (localX < anchorLocalX) {
+      const ratio = (localX - anchorLocalX) / leftDist; // ratio in [-1, 0]
+      pullX = ratio * maxPull;
+    } else if (localX > anchorLocalX) {
+      const ratio = (localX - anchorLocalX) / rightDist; // ratio in [0, 1]
+      pullX = ratio * maxPull;
+    }
+
+    if (localY < anchorLocalY) {
+      const ratio = (localY - anchorLocalY) / topDist; // [-1, 0]
+      pullY = ratio * maxPull;
+    } else if (localY > anchorLocalY) {
+      const ratio = (localY - anchorLocalY) / bottomDist; // [0, 1]
+      pullY = ratio * maxPull;
+    }
+
+    return { x: anchorX + pullX, y: anchorY + pullY };
+  };
+
+  const tick = (time: number) => {
+    if (!mouse || !mouseTrailer) return;
+
+    const dt = Math.min((time - lastTime) / 1000, 1 / 30);
+    lastTime = time;
+
+    const trailerRadius = mouseTrailer.offsetWidth / 2;
+    const restDistance = mouse.offsetWidth / 2 + trailerRadius;
+
+    let dx = trailer.x - pointer.x;
+    let dy = trailer.y - pointer.y;
+    let distance = Math.hypot(dx, dy) || 1;
+
+    const target = magnetTarget ?? {
+      x: pointer.x + (dx / distance) * restDistance,
+      y: pointer.y + (dy / distance) * restDistance,
+    };
+    const spring = magnetTarget ? MAGNET_SPRING : CHASE_SPRING;
+
+    trailer.vx += (spring.stiffness * (target.x - trailer.x) - spring.damping * trailer.vx) * dt;
+    trailer.vy += (spring.stiffness * (target.y - trailer.y) - spring.damping * trailer.vy) * dt;
+    trailer.x += trailer.vx * dt;
+    trailer.y += trailer.vy * dt;
+
+    if (!magnetTarget) {
+      dx = trailer.x - pointer.x;
+      dy = trailer.y - pointer.y;
+      distance = Math.hypot(dx, dy) || 1;
+
+      if (distance < restDistance) {
+        const nx = dx / distance;
+        const ny = dy / distance;
+
+        trailer.x = pointer.x + nx * restDistance;
+        trailer.y = pointer.y + ny * restDistance;
+
+        const inward = trailer.vx * nx + trailer.vy * ny;
+        if (inward < 0) {
+          trailer.vx -= (1 + COLLISION_BOUNCE) * inward * nx;
+          trailer.vy -= (1 + COLLISION_BOUNCE) * inward * ny;
+        }
+      }
+    }
+
+    const speed = Math.hypot(trailer.vx, trailer.vy);
+    const stretch = Math.min(speed / 2000, MAX_STRETCH);
+    const angle = Math.atan2(trailer.vy, trailer.vx);
+
+    mouseTrailer.style.transform =
+      `translate(${trailer.x - trailerRadius}px, ${trailer.y - trailerRadius}px) ` +
+      `rotate(${angle}rad) scale(${1 + stretch}, ${1 - stretch / 2})`;
+
+    const settled = speed < 0.5 && Math.hypot(target.x - trailer.x, target.y - trailer.y) < 0.5;
+    rafId = settled ? null : requestAnimationFrame(tick);
+  };
+
+  const startLoop = () => {
+    if (rafId !== null) return;
+    lastTime = performance.now();
+    rafId = requestAnimationFrame(tick);
+  };
+
   if (!isMobile) {
     // hover elements
     document.addEventListener(
@@ -107,89 +207,21 @@ const { animateInCursor } = Astro.props;
         mouse.style.left = `${mouseX}px`;
         mouse.style.top = `${mouseY}px`;
 
-        // trailer
-        const babyMouseX = e.clientX - mouseTrailer.offsetWidth / 2;
-        const babyMouseY = e.clientY - mouseTrailer.offsetHeight / 2;
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+
+        // start the trailer resting just below the mouse
+        if (!initialised) {
+          trailer.x = pointer.x;
+          trailer.y = pointer.y + mouse.offsetWidth / 2 + mouseTrailer.offsetWidth / 2;
+          initialised = true;
+        }
 
         const underMouse = document.elementFromPoint(e.clientX, e.clientY);
         const actionableTarget = underMouse ? underMouse.closest('.actionable') : null;
+        magnetTarget = actionableTarget ? getMagnetTarget(actionableTarget) : null;
 
-        if (actionableTarget) {
-          const rect = actionableTarget.getBoundingClientRect();
-
-          const actionableXOffset = actionableTarget.getAttribute('actionable-x-offset');
-          const actionableYOffset = actionableTarget.getAttribute('actionable-y-offset');
-
-          // use offset point as the reference
-          const anchorX = actionableXOffset ? rect.x + parseInt(actionableXOffset) : rect.x;
-          const anchorY = actionableYOffset ? rect.y + parseInt(actionableYOffset) : rect.y;
-
-          const maxPull = 10; // maximum magnet offset
-
-          // mouse position relative to rect
-          const localX = e.clientX - rect.left;
-          const localY = e.clientY - rect.top;
-
-          // anchor position relative to rect
-          const anchorLocalX = anchorX - rect.left;
-          const anchorLocalY = anchorY - rect.top;
-
-          // distances from anchor to edges
-          const leftDist = anchorLocalX;
-          const rightDist = rect.width - anchorLocalX;
-          const topDist = anchorLocalY;
-          const bottomDist = rect.height - anchorLocalY;
-
-          let pullX = 0;
-          let pullY = 0;
-
-          // scale X relative to anchor
-          if (localX < anchorLocalX) {
-            // left side → scale between anchor and left edge
-            const ratio = (localX - anchorLocalX) / leftDist; // ratio in [-1, 0]
-            pullX = ratio * maxPull;
-          } else if (localX > anchorLocalX) {
-            // right side → scale between anchor and right edge
-            const ratio = (localX - anchorLocalX) / rightDist; // ratio in [0, 1]
-            pullX = ratio * maxPull;
-          }
-
-          // scale Y relative to anchor
-          if (localY < anchorLocalY) {
-            // above anchor
-            const ratio = (localY - anchorLocalY) / topDist; // [-1, 0]
-            pullY = ratio * maxPull;
-          } else if (localY > anchorLocalY) {
-            // below anchor
-            const ratio = (localY - anchorLocalY) / bottomDist; // [0, 1]
-            pullY = ratio * maxPull;
-          }
-
-          // final position = anchor + proportional pull
-          const finalX = anchorX + pullX - mouseTrailer.offsetWidth / 2;
-          const finalY = anchorY + pullY - mouseTrailer.offsetHeight / 2;
-
-          mouseTrailer.animate(
-            {
-              transform: `translate(${finalX}px, ${finalY}px)`,
-            },
-            {
-              duration: 500,
-              fill: 'forwards',
-            }
-          );
-        } else {
-          // normal chasing mode
-          mouseTrailer.animate(
-            {
-              transform: `translate(${babyMouseX}px, ${babyMouseY}px)`,
-            },
-            {
-              duration: 1000,
-              fill: 'forwards',
-            }
-          );
-        }
+        startLoop();
       },
       { passive: true }
     );
