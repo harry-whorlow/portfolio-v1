@@ -1,14 +1,7 @@
-import dayjs from 'dayjs';
-
-const birthDate = dayjs('02/28/1998');
+const birthDate = Temporal.PlainDateTime.from('1998-02-28T00:00').toZonedDateTime(Temporal.Now.timeZoneId());
 
 export const returnEstd = (): { days: string; hours: string; minuets: string } => {
-  const curentDate = dayjs();
-  const dateDifferancSec = curentDate.diff(birthDate, 's');
-
-  const days = Math.floor(dateDifferancSec / 86400);
-  const hours = Math.floor((dateDifferancSec - days * 86400) / 3600);
-  const minuets = Math.floor((dateDifferancSec - days * 86400 - hours * 3600) / 60);
+  const { days, hours, minutes: minuets } = Temporal.Now.zonedDateTimeISO().since(birthDate, { largestUnit: 'day' });
 
   return {
     days: String(days),
