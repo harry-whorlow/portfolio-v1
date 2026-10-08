@@ -1,0 +1,11 @@
+{
+  "file": "moon-4096x2048.bin",
+  "cols": 4096,
+  "rows": 2048,
+  "vertexCount": 8394753,
+  "format": "int16le",
+  "unitsPerKm": 2000,
+  "radiusKm": 1737.4,
+  "minKm": -9.058671951293945,
+  "maxKm": 10.747735023498535
+}
