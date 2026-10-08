@@ -1,3 +1,6 @@
 
 [dev]
   targetPort = 1234
+
+[build.environment]
+  NODE_VERSION = "26"
