@@ -2,18 +2,29 @@ import * as THREE from "three";
 
 const RAMP = ["#2b1a5e", "#2f4fa8", "#2a9bb5", "#55b86b", "#d8c95a", "#d9813a", "#b8402e", "#f4ede4"];
 const CONTOUR_INTERVAL_KM = 0.25;
+const MAJOR_EVERY = 5;
+// Seconds for the contours to climb one major interval; a whole major step loops seamlessly.
+const CONTOUR_FLOW_SECONDS = 24;
 const FILL_COLOR = "#090b10";
 
 export interface TopoMaterial extends THREE.MeshBasicMaterial {
   setHeatmap(enabled: boolean): void;
+  /** Starts blending toward `heightMap`; the geometry must carry a matching `nextPosition` attribute. */
+  setNextHeightMap(heightMap: THREE.DataTexture): void;
+  setBlend(t: number): void;
+  setTime(seconds: number): void;
+  setHeightMap(heightMap: THREE.DataTexture): void;
 }
 
 export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, maxKm: number, heatmap: boolean): TopoMaterial {
   const uniforms = {
     uHeightMap: { value: heightMap },
+    uHeightMapNext: { value: heightMap },
+    uBlend: { value: 0 },
     uMinKm: { value: minKm },
     uMaxKm: { value: maxKm },
     uContourInterval: { value: CONTOUR_INTERVAL_KM },
+    uContourShift: { value: 0 },
     uRamp: { value: RAMP.map((hex) => new THREE.Color(hex)) },
     uHeatmap: { value: heatmap },
     uFillColor: { value: new THREE.Color(FILL_COLOR) },
@@ -25,8 +36,14 @@ export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, 
     Object.assign(shader.uniforms, uniforms);
 
     shader.vertexShader = shader.vertexShader
-      .replace("#include <common>", "#include <common>\nattribute vec2 gridUv;\nvarying vec2 vGridUv;")
-      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvGridUv = gridUv;");
+      .replace(
+        "#include <common>",
+        "#include <common>\nattribute vec2 gridUv;\nattribute vec3 nextPosition;\nuniform float uBlend;\nvarying vec2 vGridUv;",
+      )
+      .replace(
+        "#include <begin_vertex>",
+        "#include <begin_vertex>\ntransformed = mix(position, nextPosition, uBlend);\nvGridUv = gridUv;",
+      );
 
     shader.fragmentShader = shader.fragmentShader
       .replace(
@@ -34,18 +51,21 @@ export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, 
         /* glsl */ `#include <common>
         #define RAMP_SIZE ${RAMP.length}
         uniform sampler2D uHeightMap;
+        uniform sampler2D uHeightMapNext;
+        uniform float uBlend;
         uniform float uMinKm;
         uniform float uMaxKm;
         uniform float uContourInterval;
+        uniform float uContourShift;
         uniform vec3 uRamp[RAMP_SIZE];
         uniform bool uHeatmap;
         uniform vec3 uFillColor;
         varying vec2 vGridUv;
 
-        float heightAt(ivec2 p, ivec2 size) {
+        float heightAt(sampler2D map, ivec2 p, ivec2 size) {
           p.x = (p.x % size.x + size.x) % size.x;
           p.y = clamp(p.y, 0, size.y - 1);
-          return texelFetch(uHeightMap, p, 0).r;
+          return texelFetch(map, p, 0).r;
         }
 
         vec4 bspline(float f) {
@@ -59,8 +79,8 @@ export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, 
           ) / 6.0;
         }
 
-        float smoothHeight(vec2 uv) {
-          ivec2 size = textureSize(uHeightMap, 0);
+        float smoothHeight(sampler2D map, vec2 uv) {
+          ivec2 size = textureSize(map, 0);
           vec2 p = uv * vec2(float(size.x), float(size.y - 1));
           vec2 cell = floor(p);
           vec2 f = p - cell;
@@ -71,7 +91,7 @@ export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, 
           for (int y = 0; y < 4; y++) {
             float row = 0.0;
             for (int x = 0; x < 4; x++) {
-              row += wx[x] * heightAt(base + ivec2(x, y), size);
+              row += wx[x] * heightAt(map, base + ivec2(x, y), size);
             }
             h += wy[y] * row;
           }
@@ -93,12 +113,14 @@ export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, 
       )
       .replace(
         "#include <opaque_fragment>",
-        /* glsl */ `float vHeight = smoothHeight(vGridUv);
+        /* glsl */ `float vHeight = smoothHeight(uHeightMap, vGridUv);
+        if (uBlend > 0.0) vHeight = mix(vHeight, smoothHeight(uHeightMapNext, vGridUv), uBlend);
         float heightT = clamp((vHeight - uMinKm) / (uMaxKm - uMinKm), 0.0, 1.0);
         vec3 baseColor = uHeatmap ? ramp(heightT) : vec3(1.0);
         vec3 minorColor = uHeatmap ? baseColor : vec3(mix(0.15, 1.0, heightT));
-        float minorLine = contour(vHeight, uContourInterval, 0.6);
-        float majorLine = contour(vHeight, uContourInterval * 5.0, 1.2);
+        float lineHeight = vHeight - uContourShift;
+        float minorLine = contour(lineHeight, uContourInterval, 0.6);
+        float majorLine = contour(lineHeight, uContourInterval * ${MAJOR_EVERY}.0, 1.2);
         outgoingLight = mix(uFillColor, minorColor, minorLine * 0.6);
         outgoingLight = mix(outgoingLight, baseColor, majorLine);
         #include <opaque_fragment>`,
@@ -107,6 +129,23 @@ export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, 
 
   material.setHeatmap = (enabled) => {
     uniforms.uHeatmap.value = enabled;
+  };
+
+  material.setNextHeightMap = (next) => {
+    uniforms.uHeightMapNext.value = next;
+  };
+
+  material.setHeightMap = (heightMap) => {
+    uniforms.uHeightMap.value = heightMap;
+  };
+
+  material.setTime = (seconds) => {
+    const loop = (seconds / CONTOUR_FLOW_SECONDS) % 1;
+    uniforms.uContourShift.value = loop * CONTOUR_INTERVAL_KM * MAJOR_EVERY;
+  };
+
+  material.setBlend = (t) => {
+    uniforms.uBlend.value = t;
   };
 
   return material;

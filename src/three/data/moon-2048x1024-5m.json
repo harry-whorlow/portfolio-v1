@@ -1,0 +1,11 @@
+{
+  "file": "moon-2048x1024-5m.bin.gz",
+  "cols": 2048,
+  "rows": 1024,
+  "vertexCount": 2100225,
+  "format": "int16le-rowdelta-split-gzip",
+  "unitsPerKm": 200,
+  "radiusKm": 1737.4,
+  "minKm": -8.625,
+  "maxKm": 10.45
+}
