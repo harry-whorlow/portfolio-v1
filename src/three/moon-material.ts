@@ -1,6 +1,6 @@
 import * as THREE from "three";
+import { RAMP } from "./palette";
 
-const RAMP = ["#2b1a5e", "#2f4fa8", "#2a9bb5", "#55b86b", "#d8c95a", "#d9813a", "#b8402e", "#f4ede4"];
 const CONTOUR_INTERVAL_KM = 0.25;
 const MAJOR_EVERY = 5;
 // Seconds for the contours to climb one major interval; a whole major step loops seamlessly.

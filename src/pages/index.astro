@@ -2,24 +2,53 @@
 import Body from '../layouts/Body/Body.astro';
 
 import TextScroller from '../components/TextScroller/index.astro';
+
+import { RAMP } from '../three/palette';
+
+// low, mid and high elevation
+const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
 ---
 
 <Body title="Projekt Neu | Harry Whorlow">
-  <section class="first-section relative h-screen w-full overflow-hidden">
-    <canvas id="moon-canvas" class="block h-full w-full"></canvas>
-    <div class="hero-copy pointer-events-none absolute top-0 left-0 p-8 md:p-12">
-      <h1 class="hero-title">I'm Harry,</h1>
-      <p class="hero-tagline">I build tools, teams, and occasionally climb stuff.</p>
-    </div>
-  </section>
+  <div class="theme" data-theme="dark">
+    <section class="first-section relative h-screen w-full overflow-hidden">
+      <canvas id="moon-canvas" class="block h-full w-full"></canvas>
+      <div class="hero-copy pointer-events-none absolute top-0 left-0 p-8 md:p-12">
+        <h1 class="hero-title">I'm Harry,</h1>
+        <p class="hero-tagline">I build tools, teams, and occasionally climb stuff.</p>
+      </div>
 
-  <div id="overlay-secondary">
-    <section class="second-section flex min-h-screen flex-col justify-center">
-      <TextScroller />
+      <div class="progress-bars" aria-hidden="true">
+        {progressColors.map((color) => (
+          <div class="progress-bar" style={`--bar-color: ${color}`} />
+        ))}
+      </div>
     </section>
+
+    <div id="overlay-secondary">
+      <section class="second-section flex min-h-screen flex-col justify-center">
+        <TextScroller />
+      </section>
+    </div>
   </div>
 
   <style>
+    .theme {
+      --theme-bg: #000;
+      --theme-fg: var(--main-text-light);
+
+      background-color: var(--theme-bg);
+      color: var(--theme-fg);
+      transition:
+        background-color 0.6s ease,
+        color 0.6s ease;
+    }
+
+    .theme[data-theme='light'] {
+      --theme-bg: var(--grey-light-main);
+      --theme-fg: var(--main-text-dark);
+    }
+
     #overlay-secondary {
       opacity: 0;
     }
@@ -41,6 +70,30 @@ import TextScroller from '../components/TextScroller/index.astro';
     .hero-copy {
       will-change: transform;
     }
+
+    .progress-bars {
+      position: absolute;
+      right: 0;
+      bottom: 2rem;
+      left: 0;
+
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      pointer-events: none;
+    }
+
+    .progress-bar {
+      height: 2px;
+      width: 100%;
+
+      background-color: var(--bar-color);
+
+      transform: scaleX(0);
+      transform-origin: left center;
+      will-change: transform;
+    }
   </style>
 
   <script>
@@ -54,30 +107,41 @@ import TextScroller from '../components/TextScroller/index.astro';
     document.addEventListener('DOMContentLoaded', () => {
       const canvas = document.querySelector<HTMLCanvasElement>('#moon-canvas');
       const moon = canvas && createMoon(canvas);
+      const theme = document.querySelector<HTMLElement>('.theme')!;
+      const setTheme = (value: 'dark' | 'light') => (theme.dataset.theme = value);
 
-      ScrollTrigger.create({
-        trigger: '.first-section',
-        start: 'top top',
-        end: '+=150%',
-        pin: true,
-        onUpdate: (self) => moon?.setScroll(self.progress),
-      });
-
-      // move the hero copy up off-screen in step with the pinned moon animation
-      gsap.to('.hero-copy', {
-        y: () => {
-          const copy = document.querySelector<HTMLElement>('.hero-copy');
-          return copy ? -(copy.offsetTop + copy.offsetHeight) : 0;
-        },
-        ease: 'none',
+      // one scrubbed timeline drives the pin, so the copy, the bars and the theme flip can't drift apart
+      const intro = gsap.timeline({
+        defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: '.first-section',
           start: 'top top',
           end: '+=150%',
+          pin: true,
           scrub: true,
           invalidateOnRefresh: true,
+          onUpdate: (self) => moon?.setScroll(self.progress),
+          // the last bar reaches the right edge exactly as the pin ends
+          onLeave: () => setTheme('light'),
+          onEnterBack: () => setTheme('dark'),
         },
       });
+
+      // move the hero copy up off-screen in step with the pinned moon animation
+      intro.to(
+        '.hero-copy',
+        {
+          y: () => {
+            const copy = document.querySelector<HTMLElement>('.hero-copy');
+            return copy ? -(copy.offsetTop + copy.offsetHeight) : 0;
+          },
+          duration: 1,
+        },
+        0
+      );
+
+      // staggered so the bars arrive one after another, together spanning the whole pin
+      intro.to('.progress-bar', { scaleX: 1, duration: 0.8, stagger: 0.1 }, 0);
 
       gsap.to('#overlay-secondary', {
         opacity: 1,

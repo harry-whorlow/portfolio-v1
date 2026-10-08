@@ -12,7 +12,7 @@ const UPGRADE_MIN_MBPS = 25;
 const THROUGHPUT_KEY = 'moon:mbps';
 
 const MOON_RADIUS_KM = 1737.4;
-const EXAGGERATION = 4;
+const EXAGGERATION = 6;
 const MESH_COLS = 1024;
 const MESH_ROWS = 512;
 
@@ -142,7 +142,7 @@ function createMoonGeometry(heights: Int16Array, meta: HeightMeta) {
 }
 
 export function createMoon(canvas: HTMLCanvasElement, { heatmap = true, distanceKm = 1300 }: MoonOptions = {}): Moon {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const scene = new THREE.Scene();
