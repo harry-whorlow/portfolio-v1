@@ -1,0 +1,152 @@
+<div>
+  <div class="rail" id="big">
+    <span class="big-text">PART TIME DEVELOPER</span>
+    <span class="big-text">&</span>
+    <span class="big-text">FULL TIME PROCRASTINATOR</span>
+    <span class="big-text">-</span>
+    <span class="big-text">OCCASIONALLY PRESENT</span>
+    <span class="big-text">// &nbsp</span>
+  </div>
+
+  <div class="rail" id="small">
+    <span class="small-text">TanStack</span>
+    <span class="small-text">-</span>
+    <span class="small-text">MUI</span>
+    <span class="small-text">-</span>
+    <span class="small-text">E18E</span>
+    <span class="small-text">-</span>
+    <span class="small-text">TanStack</span>
+    <span class="small-text">-</span>
+    <span class="small-text">Neon</span>
+    <span class="small-text">-</span>
+    <span class="small-text">MUI</span>
+    <span class="small-text">-</span>
+    <span class="small-text">E18E</span>
+    <span class="small-text">-</span>
+  </div>
+</div>
+
+<style>
+  .big-text {
+    font-size: 100px;
+    font-weight: 400;
+    font-family: 'Alliance Neue', sans-serif;
+  }
+
+  .small-text {
+    font-size: 40px;
+    font-weight: 400;
+    font-family: 'Ingram Mono', monospace;
+  }
+
+  span {
+    white-space: nowrap;
+
+    letter-spacing: ls(120);
+    line-height: 1em;
+
+    margin-right: 2.5rem;
+
+    color: var(--main-text-light);
+
+    z-index: 100;
+  }
+
+  .rail {
+    display: flex;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  import { horizontalLoop } from '../../utils/horizontal-loop.helper';
+
+  type Rail = {
+    el: HTMLElement;
+    originals: HTMLElement[];
+    config: Parameters<typeof horizontalLoop>[1];
+    scrollDownTimeScale: number;
+    tl?: ReturnType<typeof horizontalLoop>;
+    tween?: GSAPTween;
+    timeScale?: number;
+  };
+
+  const contentWidth = (rail: HTMLElement) => {
+    const items = rail.children;
+    const first = items[0] as HTMLElement;
+    const last = items[items.length - 1] as HTMLElement;
+    return last.offsetLeft + last.offsetWidth - first.offsetLeft;
+  };
+
+  // a seamless loop needs enough content to cover the viewport plus the item currently wrapping round
+  const needsFill = (rail: Rail) =>
+    contentWidth(rail.el) < window.innerWidth + Math.max(...rail.originals.map((item) => item.offsetWidth));
+
+  const fillRail = (rail: Rail) => {
+    while (needsFill(rail)) {
+      rail.originals.forEach((item) => {
+        const clone = item.cloneNode(true) as HTMLElement;
+        clone.removeAttribute('style');
+        clone.setAttribute('aria-hidden', 'true');
+        rail.el.appendChild(clone);
+      });
+    }
+  };
+
+  const buildRail = (rail: Rail) => {
+    rail.tl?.destroy();
+    rail.tween?.kill();
+
+    fillRail(rail);
+    rail.tl = horizontalLoop(Array.from(rail.el.children), rail.config);
+
+    // carry the scroll-direction state over to the rebuilt loop
+    if (rail.timeScale !== undefined) rail.tl.timeScale(rail.timeScale);
+  };
+
+  document.fonts.ready.then(() => {
+    const rails: Rail[] = [
+      {
+        el: document.querySelector<HTMLElement>('#big')!,
+        originals: gsap.utils.toArray<HTMLElement>('#big .big-text'),
+        config: { repeat: -1, speed: 0.5, snap: false, reversed: true },
+        scrollDownTimeScale: -1,
+      },
+      {
+        el: document.querySelector<HTMLElement>('#small')!,
+        originals: gsap.utils.toArray<HTMLElement>('#small .small-text'),
+        config: { repeat: -1, speed: 1, snap: false },
+        scrollDownTimeScale: 1,
+      },
+    ];
+
+    rails.forEach(buildRail);
+
+    // the loop re-measures itself on resize, but only a rebuild can pick up newly added clones
+    window.addEventListener('resize', () => {
+      rails.filter(needsFill).forEach(buildRail);
+    });
+
+    let scrollDirection = 1;
+
+    // active for as long as the scroller is on screen
+    ScrollTrigger.create({
+      trigger: '.second-section',
+      start: 'top bottom',
+      end: 'bottom top',
+      onUpdate: (self) => {
+        if (self.direction === scrollDirection) return;
+        scrollDirection = self.direction;
+
+        rails.forEach((rail) => {
+          rail.timeScale = rail.scrollDownTimeScale * scrollDirection;
+          rail.tween?.kill();
+          rail.tween = gsap.to(rail.tl!, { duration: 0.3, timeScale: rail.timeScale });
+        });
+      },
+    });
+  });
+</script>
