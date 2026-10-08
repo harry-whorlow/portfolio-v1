@@ -1,0 +1,335 @@
+/*
+Font: 		Alliance Neue Light
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-light.woff2') format('woff2');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Light Italic
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-light-italic.woff2') format('woff2');
+	font-weight: 300;
+	font-style: italic;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Regular
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Italic
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-italic.woff2') format('woff2');
+	font-weight: 400;
+	font-style: italic;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Medium
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Medium Italic
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-medium-italic.woff2') format('woff2');
+	font-weight: 500;
+	font-style: italic;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue SemiBold
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-semibold.woff2') format('woff2');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue SemiBold Italic
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-semibold-italic.woff2') format('woff2');
+	font-weight: 600;
+	font-style: italic;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Bold
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Bold Italic
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-bold-italic.woff2') format('woff2');
+	font-weight: 700;
+	font-style: italic;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue ExtraBold
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-extrabold.woff2') format('woff2');
+	font-weight: 800;
+	font-style: normal;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue ExtraBold Italic
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-extrabold-italic.woff2') format('woff2');
+	font-weight: 800;
+	font-style: italic;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Black
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-black.woff2') format('woff2');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+/*
+Font: 		Alliance Neue Black Italic
+Style: 		
+URL: 		https://youworkforthem.com/font/T33119/alliance-neue
+Foundry: 	Degarism Studio
+Foundry: 	https://youworkforthem.com/designer/869/degarism-studio
+Copyright:	
+Version: 	18
+Created:	June 03, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Alliance Neue';
+	src: url('alliance-neue-black-italic.woff2') format('woff2');
+	font-weight: 900;
+	font-style: italic;
+	font-display: swap;
+}

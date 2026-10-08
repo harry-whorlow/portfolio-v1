@@ -1,30 +1,30 @@
 <div>
   <div class="rail" id="big">
-    <h1 class="big-text">PART TIME DEVELOPER</h1>
-    <h1 class="big-text">&</h1>
-    <h1 class="big-text">FULL TIME PROCRASTINATOR</h1>
-    <h1 class="big-text">-</h1>
-    <h1 class="big-text">OCCASIONALLY PRESENT</h1>
-    <h1 class="big-text">// &nbsp</h1>
+    <span class="big-text">PART TIME DEVELOPER</span>
+    <span class="big-text">&</span>
+    <span class="big-text">FULL TIME PROCRASTINATOR</span>
+    <span class="big-text">-</span>
+    <span class="big-text">OCCASIONALLY PRESENT</span>
+    <span class="big-text">// &nbsp</span>
   </div>
 
   <div class="rail" id="small">
-    <h1 class="small-text">Python</h1>
-    <h1 class="small-text">-</h1>
-    <h1 class="small-text">JavaScript</h1>
-    <h1 class="small-text">-</h1>
-    <h1 class="small-text">Go Lang</h1>
-    <h1 class="small-text">-</h1>
-    <h1 class="small-text">TypeScript</h1>
-    <h1 class="small-text">-</h1>
-    <h1 class="small-text">Python</h1>
-    <h1 class="small-text">-</h1>
-    <h1 class="small-text">JavaScript</h1>
-    <h1 class="small-text">-</h1>
-    <h1 class="small-text">Go Lang</h1>
-    <h1 class="small-text">-</h1>
-    <h1 class="small-text">TypeScript</h1>
-    <h1 class="small-text">- &nbsp</h1>
+    <span class="small-text">Python</span>
+    <span class="small-text">-</span>
+    <span class="small-text">JavaScript</span>
+    <span class="small-text">-</span>
+    <span class="small-text">Go Lang</span>
+    <span class="small-text">-</span>
+    <span class="small-text">TypeScript</span>
+    <span class="small-text">-</span>
+    <span class="small-text">Python</span>
+    <span class="small-text">-</span>
+    <span class="small-text">JavaScript</span>
+    <span class="small-text">-</span>
+    <span class="small-text">Go Lang</span>
+    <span class="small-text">-</span>
+    <span class="small-text">TypeScript</span>
+    <span class="small-text">- &nbsp</span>
   </div>
 </div>
 
@@ -32,16 +32,16 @@
   .big-text {
     font-size: 100px;
     font-weight: 400;
+    font-family: 'Alliance Neue', sans-serif;
   }
 
   .small-text {
     font-size: 40px;
     font-weight: 400;
+    font-family: 'Ingram Mono', monospace;
   }
 
-  h1 {
-    font-family: dystopian;
-
+  span {
     white-space: nowrap;
 
     letter-spacing: ls(120);
@@ -66,66 +66,70 @@
 
   import { horizontalLoop } from '../../../utils/horizontal-loop.helper';
 
-  const scrollingText = gsap.utils.toArray<Element>('#big .big-text');
-  const smallScrollingText = gsap.utils.toArray<Element>('#small .small-text');
+  document.fonts.ready.then(() => {
+    const scrollingText = gsap.utils.toArray<Element>('#big .big-text');
+    const smallScrollingText = gsap.utils.toArray<Element>('#small .small-text');
 
-  // big timeline
-  const BigTl = horizontalLoop(scrollingText, {
-    paused: true,
-    repeat: -1,
-    speed: 0.5,
-  });
+    // big timeline
+    const BigTl = horizontalLoop(scrollingText, {
+      paused: true,
+      repeat: -1,
+      speed: 0.5,
+      snap: false,
+    });
 
-  let bigDirection = 1;
-  let BigT: GSAPTween;
+    let bigDirection = 1;
+    let BigT: GSAPTween;
 
-  ScrollTrigger.create({
-    trigger: '#overlay-secondary',
-    start: 'top top',
-    end: 'bottom top',
-    onUpdate: (self) => {
-      if (self.direction !== bigDirection) {
-        bigDirection = self.direction;
-        BigT && BigT.kill();
-        BigT = gsap.to(BigTl, {
-          duration: 0.3,
-          timeScale: self.direction,
-        });
-      }
-    },
-  });
+    ScrollTrigger.create({
+      trigger: '#overlay-secondary',
+      start: 'top top',
+      end: 'bottom top',
+      onUpdate: (self) => {
+        if (self.direction !== bigDirection) {
+          bigDirection = self.direction;
+          BigT && BigT.kill();
+          BigT = gsap.to(BigTl, {
+            duration: 0.3,
+            timeScale: self.direction,
+          });
+        }
+      },
+    });
 
-  ScrollTrigger.create({
-    trigger: '.second-section',
-    start: 'top center',
-    end: 'bottom bottom',
-    onEnter: () => BigTl.play(),
-    onLeave: () => BigTl.paused(),
-  });
+    ScrollTrigger.create({
+      trigger: '.second-section',
+      start: 'top center',
+      end: 'bottom bottom',
+      onEnter: () => BigTl.play(),
+      onLeave: () => BigTl.pause(),
+    });
 
-  //small timeline
-  const smallTl = horizontalLoop(smallScrollingText, {
-    repeat: -1,
-    speed: 1,
-    reversed: true,
-  });
+    //small timeline
+    const smallTl = horizontalLoop(smallScrollingText, {
+      repeat: -1,
+      speed: 1,
+      snap: false,
+      reversed: true,
+    });
 
-  let smallDirection = -1;
-  let smallT: GSAPTween;
+    let smallDirection = -1;
+    let smallT: GSAPTween;
 
-  ScrollTrigger.create({
-    trigger: '#overlay-secondary',
-    start: 'top top',
-    end: 'bottom top',
-    onUpdate: (self) => {
-      if (self.direction !== smallDirection) {
-        smallDirection = self.direction;
-        smallT && smallT.kill();
-        smallT = gsap.to(smallTl, {
-          duration: 0.3,
-          timeScale: self.direction * -1,
-        });
-      }
-    },
+    ScrollTrigger.create({
+      trigger: '#overlay-secondary',
+      start: 'top top',
+      end: 'bottom top',
+      onUpdate: (self) => {
+        if (self.direction !== smallDirection) {
+          smallDirection = self.direction;
+          smallT && smallT.kill();
+          smallT = gsap.to(smallTl, {
+            duration: 0.3,
+            timeScale: self.direction * -1,
+          });
+        }
+      },
+    });
   });
 </script>

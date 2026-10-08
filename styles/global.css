@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+@import '../public/fonts/Alliance/alliance-neue.css';
+@import '../public/fonts/Ingram/ingram-mono.css';
+
+/* Headings use Alliance */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Alliance Neue', sans-serif;
+}
+
+/* All other text uses Ingram */
+body,
+p,
+a,
+li,
+span,
+div {
+  font-family: 'Ingram Mono', monospace;
+}
+
+.os-scrollbar {
+  --os-handle-bg: #c0c0c0;
+  --os-handle-bg-hover: #c0c0c0;
+}

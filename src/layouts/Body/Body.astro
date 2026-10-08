@@ -6,18 +6,18 @@ import CustomCursor from '../../components/CustomCursor/CustomCursor.astro';
 
 // images
 import faviconSvgSrc from '../../images/favicon.svg';
+import noiseGif from '../../images/noise.gif';
 
 // styles
-import '../../styles/global.css';
+import '../../../styles/global.css';
 
 const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
 
 interface Props {
   title: string;
-  animateInCursor?: boolean;
 }
 
-const { title, animateInCursor } = Astro.props;
+const { title } = Astro.props;
 ---
 
 <!doctype html>
@@ -33,7 +33,8 @@ const { title, animateInCursor } = Astro.props;
 
   <body data-overlayscrollbars-initialize>
     <main class="min-h-screen">
-      <CustomCursor animateInCursor={animateInCursor} />
+      <CustomCursor />
+      <div id="noise-overlay" style={`background-image: url('${noiseGif.src}')`}></div>
 
       <div class="h-full" id="smooth-wrapper">
         <div class="h-full" id="smooth-content">
@@ -90,6 +91,17 @@ const { title, animateInCursor } = Astro.props;
 
   main {
     min-height: 100vh;
+  }
+
+  #noise-overlay {
+    position: fixed;
+    inset: 0;
+
+    background-size: 80px;
+    opacity: 0.1;
+
+    z-index: 40;
+    pointer-events: none;
   }
 
   .actionable {

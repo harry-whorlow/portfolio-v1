@@ -1,0 +1,23 @@
+/*
+Font: 		Ingram Mono
+Style: 		Regular
+URL: 		https://youworkforthem.com/font/T11571/ingram-mono
+Foundry: 	Typeface Design Studio
+Foundry: 	https://youworkforthem.com/designer/1740/typeface-design-studio
+Copyright:	Copyright (c) 2019 by Minor Praxis. All rights reserved.
+Version: 	18
+Created:	April 02, 2026
+License: 	https://www.youworkforthem.com/font-license 
+License: 	The WebFont(s) listed in this document must follow the YouWorkForThem
+			WebFont license rules. All other parties are strictly restricted 
+			from using the WebFonts(s) listed without a purchased license. 
+			All details above must always remain unaltered and visible in your CSS.
+*/
+
+@font-face {
+	font-family: 'Ingram Mono';
+	src: url('ingram-mono-regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
