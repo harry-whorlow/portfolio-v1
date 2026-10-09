@@ -1,0 +1,28 @@
+---
+interface Props {
+  company: string;
+  dates: string;
+}
+
+const { company, dates } = Astro.props;
+---
+
+<li class="exp-job">
+  <h3 class="text-4xl font-bold">{company}</h3>
+  <p class="mt-2 text-base">{dates}</p>
+  {Astro.slots.has('default') && (
+    <div class="exp-description mt-4 w-200 text-base">
+      <slot />
+    </div>
+  )}
+</li>
+
+<style>
+  .exp-job {
+    visibility: hidden;
+  }
+
+  .exp-description :global(> * + *) {
+    margin-top: 1rem;
+  }
+</style>

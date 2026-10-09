@@ -3,6 +3,8 @@ import Body from '../layouts/Body/Body.astro';
 
 import TextScroller from '../components/TextScroller/index.astro';
 import HorizontalProgress from '../components/HorizontalProgress/index.astro';
+import ExperienceTimeline from '../components/ExperienceTimeline/index.astro';
+import Job from '../components/ExperienceTimeline/Job.astro';
 
 import { RAMP } from '../three/palette';
 
@@ -39,6 +41,44 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
         </div>
       </section>
     </div>
+
+    <div id="third-section">
+      <section class="flex min-h-screen flex-col">
+        <ExperienceTimeline colors={[RAMP[2], RAMP[4], RAMP[6]]}>
+          <Job company="AllMyHomes" dates="01/05/22 - 17/07/22">
+            <p>
+              The biggest lesson I took from this role was patience and compassion for a fellow developer. My senior,
+              Lukas, is someone I'm still grateful to. When I was tasked with migrating my three repos into a monorepo,
+              he told me to "just copy over the APIs," so I did, literally. Thirteen thousand lines, Ctrl+C, Ctrl+V. (I
+              still cringe thinking about it.) My bootcamp had never covered micro-frontends or monoliths, and when he
+              said he'd speak to my skip-level manager, I was sure I was finished. Instead, I was given training to get
+              up to speed. I'm not the greatest developer in the world, but I'm now a competent one, and I owe much of
+              that to Lukas for having the patience and giving me another chance.
+            </p>
+          </Job>
+
+          <Job company="Technoly" dates="01/09/22 - PRESENT">
+            <p>
+              Technoly is where I really progressed as a developer. I was given the freedom to make mistakes and had
+              very little oversight for the majority of my time here. Decisions I made years ago as a junior developer
+              frequently show up again in tasks I have today. I feel that oftentimes we learn the most as developers
+              when we are confronted with decisions we made in the past, a lesson that many developers are robbed of if
+              their time at a company is on the shorter side. Consequently, I have learnt a lot here: I have become
+              confident in my developer skills, deepened my understanding of advanced TypeScript, and even became a
+              maintainer of TanStack, an organisation I once revered and still do.
+            </p>
+          </Job>
+
+          <Job company="TO BE CONTINUED..." dates="PRESENT - FUTURE">
+            <p>My story is still developing, lets see where I go next.</p>
+          </Job>
+        </ExperienceTimeline>
+      </section>
+    </div>
+
+    <div id="forth-section">
+      <section class="flex min-h-screen flex-col"></section>
+    </div>
   </div>
 
   <style>
@@ -58,7 +98,11 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       --theme-fg: var(--main-text-dark);
     }
 
-    #overlay-two {
+    #second-section {
+    }
+    #third-section {
+    }
+    #forth-section {
       opacity: 0;
     }
   </style>

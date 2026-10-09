@@ -1,0 +1,208 @@
+---
+interface Props {
+  colors: [string, string, string];
+}
+
+const { colors } = Astro.props;
+
+const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
+---
+
+<div class="experience relative p-10">
+  <h1 class="mt-10 text-[10rem] leading-none font-bold">
+    Work
+    <br />
+    {letters.map(({ char, color }) => (
+      <span class="exp-letter" data-char={char} style={`--fill-color: ${color}`}>
+        {char}
+      </span>
+    ))}
+    erience<span class="exp-baseline" aria-hidden="true"></span>
+  </h1>
+
+  <svg class="exp-lines" aria-hidden="true">
+    {letters.map(({ color }) => (
+      <path class="exp-line" stroke={color} />
+    ))}
+  </svg>
+
+  <ol class="exp-jobs">
+    <slot />
+  </ol>
+</div>
+
+<style>
+  .experience {
+    padding-bottom: calc(var(--reveal-room, 50vh) + 2.5rem);
+  }
+
+  .exp-letter {
+    position: relative;
+    font-family: inherit;
+  }
+
+  /* a coloured copy of the letter, revealed from the top down as --fill goes 0% -> 100% */
+  .exp-letter::after {
+    content: attr(data-char);
+    content: attr(data-char) / '';
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    color: var(--fill-color);
+    font-family: inherit;
+    clip-path: inset(0 0 calc(100% - var(--fill, 0%)) 0);
+  }
+
+  .exp-baseline {
+    display: inline-block;
+    width: 0;
+    height: 0;
+  }
+
+  .exp-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .exp-lines path {
+    fill: none;
+    stroke-width: 2;
+    stroke-dasharray: 0 100000;
+  }
+
+  .exp-jobs {
+    display: flex;
+    flex-direction: column;
+    gap: 8rem;
+
+    margin-top: 10rem;
+    padding-left: calc(var(--spine-x, 0px) + 4rem);
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const GAP = 6;
+  const TURN = 14;
+
+  const FILL = 150;
+  const STAGGER = 100;
+
+  const MIN_CATCH_UP = 150;
+
+  const REVEAL_AT = '50%';
+
+  // scrolling back up, a job hides once its top drops below this line, higher up the screen than REVEAL_AT
+  const HIDE_AT = '30%';
+
+  const clamp01 = gsap.utils.clamp(0, 1);
+
+  document.fonts.ready.then(() => {
+    const root = document.querySelector<HTMLElement>('.experience')!;
+    const letters = gsap.utils.toArray<HTMLElement>('.exp-letter', root);
+    const baseline = root.querySelector<HTMLElement>('.exp-baseline')!;
+    const lines = gsap.utils.toArray<SVGPathElement>('.exp-line', root);
+    const jobs = gsap.utils.toArray<HTMLElement>('.exp-job', root);
+
+    root.style.setProperty('--reveal-room', `${100 - parseFloat(REVEAL_AT)}vh`);
+
+    const ctx = document.createElement('canvas').getContext('2d')!;
+
+    let startY = 0;
+    let firstJobY = 0;
+    let spineEnd = 0;
+    let lengths: number[] = [];
+
+    const inkBottomCentre = (letter: HTMLElement, rootRect: DOMRect, baselineY: number) => {
+      const style = getComputedStyle(letter);
+      ctx.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const ink = ctx.measureText(letter.dataset.char!);
+      const rect = letter.getBoundingClientRect();
+      return {
+        x: rect.left - rootRect.left + (ink.actualBoundingBoxRight - ink.actualBoundingBoxLeft) / 2,
+        y: baselineY + ink.actualBoundingBoxDescent,
+      };
+    };
+
+    const layout = () => {
+      const rootRect = root.getBoundingClientRect();
+      const baselineY = baseline.getBoundingClientRect().bottom - rootRect.top;
+      const [e, x, p] = letters.map((letter) => inkBottomCentre(letter, rootRect, baselineY));
+
+      // x and p turn towards the E, p below x so the lines nest without crossing
+      const turnX = x.y + TURN;
+      const turnP = Math.max(p.y + TURN, turnX + GAP);
+
+      root.style.setProperty('--spine-x', `${e.x + GAP * 2}px`);
+      firstJobY = jobs[0].getBoundingClientRect().top - rootRect.top;
+      spineEnd = jobs[jobs.length - 1].getBoundingClientRect().bottom - rootRect.top;
+      startY = e.y;
+
+      lines[0].setAttribute('d', `M${e.x} ${e.y} V${spineEnd}`);
+      lines[1].setAttribute('d', `M${x.x} ${x.y} V${turnX} H${e.x + GAP} V${spineEnd}`);
+      lines[2].setAttribute('d', `M${p.x} ${p.y} V${turnP} H${e.x + GAP * 2} V${spineEnd}`);
+
+      lengths = lines.map((line) => line.getTotalLength());
+      lines.forEach((line, i) => (line.style.strokeDasharray = `${lengths[i]} ${lengths[i]}`));
+    };
+
+    // d is how far (px) we've scrolled into the sequence. blue is drawn at scroll speed, so its tip sits on
+    // REVEAL_AT; yellow and red start later and run faster until all three tips meet at the first job
+    const render = (d: number) => {
+      letters.forEach((letter, i) => letter.style.setProperty('--fill', `${clamp01((d - i * STAGGER) / FILL) * 100}%`));
+
+      const lastStart = FILL + (lines.length - 1) * STAGGER;
+      const meet = Math.max(FILL + (firstJobY - startY), lastStart + MIN_CATCH_UP);
+      const tail = spineEnd - (startY + meet - FILL);
+
+      lines.forEach((line, i) => {
+        const start = FILL + i * STAGGER;
+        const toMeet = lengths[i] - tail;
+        const drawn =
+          d < meet ? toMeet * clamp01((d - start) / (meet - start)) : Math.min(lengths[i], toMeet + (d - meet));
+        line.style.strokeDashoffset = `${lengths[i] - drawn}`;
+      });
+    };
+
+    layout();
+    render(0);
+    ScrollTrigger.addEventListener('refreshInit', layout);
+
+    ScrollTrigger.create({
+      trigger: root,
+      start: () => `top+=${startY - FILL} ${REVEAL_AT}`,
+      end: () => `top+=${spineEnd} ${REVEAL_AT}`,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => render(self.progress * (self.end - self.start)),
+      onRefresh: (self) => render(self.progress * (self.end - self.start)),
+    });
+
+    jobs.forEach((job) => {
+      const reveal = gsap.fromTo(
+        job,
+        { autoAlpha: 0, x: -24 },
+        { autoAlpha: 1, x: 0, duration: 0.6, ease: 'power2.out', paused: true }
+      );
+
+      ScrollTrigger.create({ trigger: job, start: `top ${REVEAL_AT}`, onEnter: () => reveal.play() });
+
+      // hide earlier on the way back up; also re-shows here so a job hidden just above REVEAL_AT can't get stuck
+      ScrollTrigger.create({
+        trigger: job,
+        start: `top ${HIDE_AT}`,
+        onEnter: () => reveal.play(),
+        onLeaveBack: () => reveal.reverse(),
+      });
+    });
+  });
+</script>
