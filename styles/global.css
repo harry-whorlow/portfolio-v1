@@ -3,6 +3,9 @@
 @import '../public/fonts/Alliance/alliance-neue.css';
 @import '../public/fonts/Ingram/ingram-mono.css';
 
+/* Elevation colors (text-low, text-mid, text-high) come from RAMP in src/three/palette.ts */
+@plugin './palette.ts';
+
 /* Headings use Alliance */
 h1,
 h2,

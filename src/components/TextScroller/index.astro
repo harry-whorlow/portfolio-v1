@@ -1,4 +1,4 @@
-<div>
+<div id="text-scroller">
   <div class="rail" id="big">
     <span class="big-text">PART TIME DEVELOPER</span>
     <span class="big-text">&</span>
@@ -27,23 +27,25 @@
 </div>
 
 <style>
+  #text-scroller {
+    margin-top: 7rem;
+  }
   .big-text {
-    font-size: 100px;
-    font-weight: 400;
+    font-size: 8rem;
+    line-height: 8rem;
+    font-weight: 600;
     font-family: 'Alliance Neue', sans-serif;
   }
 
   .small-text {
-    font-size: 40px;
+    font-size: 1.5rem;
     font-weight: 400;
     font-family: 'Ingram Mono', monospace;
   }
 
   span {
     white-space: nowrap;
-
     letter-spacing: ls(120);
-    line-height: 1em;
 
     margin-right: 2.5rem;
 
@@ -96,6 +98,9 @@
     }
   };
 
+  // a whole number of loops in, so it looks like the start but a reversed rail still has room to run backwards
+  const reset = (rail: Rail) => rail.tl!.pause(rail.tl!.duration() * 100);
+
   const buildRail = (rail: Rail) => {
     rail.tl?.destroy();
     rail.tween?.kill();
@@ -103,23 +108,25 @@
     fillRail(rail);
     rail.tl = horizontalLoop(Array.from(rail.el.children), rail.config);
 
-    // carry the scroll-direction state over to the rebuilt loop
-    if (rail.timeScale !== undefined) rail.tl.timeScale(rail.timeScale);
+    rail.tl.timeScale(rail.timeScale ?? rail.scrollDownTimeScale);
+    if (!visible) reset(rail);
   };
+
+  let visible = false;
 
   document.fonts.ready.then(() => {
     const rails: Rail[] = [
       {
         el: document.querySelector<HTMLElement>('#big')!,
         originals: gsap.utils.toArray<HTMLElement>('#big .big-text'),
-        config: { repeat: -1, speed: 0.5, snap: false, reversed: true },
-        scrollDownTimeScale: -1,
+        config: { repeat: -1, speed: 0.8, snap: false },
+        scrollDownTimeScale: 1,
       },
       {
         el: document.querySelector<HTMLElement>('#small')!,
         originals: gsap.utils.toArray<HTMLElement>('#small .small-text'),
-        config: { repeat: -1, speed: 1, snap: false },
-        scrollDownTimeScale: 1,
+        config: { repeat: -1, speed: 1.2, snap: false },
+        scrollDownTimeScale: -1,
       },
     ];
 
@@ -129,6 +136,15 @@
     window.addEventListener('resize', () => {
       rails.filter(needsFill).forEach(buildRail);
     });
+
+    // only run while on screen, and start back at the beginning each time it comes into view
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      rails.forEach((rail) => {
+        if (visible) rail.tl!.resume();
+        else reset(rail);
+      });
+    }).observe(document.querySelector('#text-scroller')!);
 
     let scrollDirection = 1;
 

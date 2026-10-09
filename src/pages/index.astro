@@ -2,6 +2,7 @@
 import Body from '../layouts/Body/Body.astro';
 
 import TextScroller from '../components/TextScroller/index.astro';
+import HorizontalProgress from '../components/HorizontalProgress/index.astro';
 
 import { RAMP } from '../three/palette';
 
@@ -11,23 +12,31 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
 
 <Body title="Projekt Neu | Harry Whorlow">
   <div class="theme" data-theme="dark">
-    <section class="first-section relative h-screen w-full overflow-hidden">
-      <canvas id="moon-canvas" class="block h-full w-full"></canvas>
-      <div class="hero-copy pointer-events-none absolute top-0 left-0 p-8 md:p-12">
-        <h1 class="hero-title">I'm Harry,</h1>
-        <p class="hero-tagline">I build tools, teams, and occasionally climb stuff.</p>
+    <section id="first-section" class="first-section relative h-screen w-full overflow-hidden">
+      <canvas id="moon-canvas" class="block h-full w-full" />
+
+      <div class="pointer-events-none absolute top-0 left-0 p-8 md:p-12">
+        <h1 class="text-[10rem] leading-none font-bold">I'm Harry,</h1>
+        <p class="mt-4 text-base">I build tools, teams, and occasionally climb stuff.</p>
       </div>
 
-      <div class="progress-bars" aria-hidden="true">
-        {progressColors.map((color) => (
-          <div class="progress-bar" style={`--bar-color: ${color}`} />
-        ))}
-      </div>
+      <HorizontalProgress colors={progressColors} />
     </section>
 
-    <div id="overlay-secondary">
-      <section class="second-section flex min-h-screen flex-col justify-center">
+    <div id="second-section">
+      <section class="flex min-h-screen flex-col">
         <TextScroller />
+
+        <div class="p-10">
+          <h1 class="mt-10 text-[10rem] leading-none font-bold">Open Source</h1>
+
+          <p class="mt-4 w-200 text-base">
+            I'm a maintainer for <span class="text-low">TanStack</span>, with contributions across all of our libraries,
+            though you'll find I spend a lot of time in <span class="text-mid">Form</span> and{' '}
+            <span class="text-high">Devtools</span> realm. I've also contributed to MUI, the e18e community, and Neon
+            along the way.
+          </p>
+        </div>
       </section>
     </div>
   </div>
@@ -49,50 +58,8 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       --theme-fg: var(--main-text-dark);
     }
 
-    #overlay-secondary {
+    #overlay-two {
       opacity: 0;
-    }
-
-    .hero-title {
-      font-size: 10rem;
-      font-weight: 700;
-      font-family: 'Alliance Neue', sans-serif;
-      line-height: 1;
-      color: var(--main-text-light);
-    }
-
-    .hero-tagline {
-      margin-top: 1rem;
-      font-size: 1rem;
-      color: var(--main-text-light);
-    }
-
-    .hero-copy {
-      will-change: transform;
-    }
-
-    .progress-bars {
-      position: absolute;
-      right: 0;
-      bottom: 2rem;
-      left: 0;
-
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-
-      pointer-events: none;
-    }
-
-    .progress-bar {
-      height: 2px;
-      width: 100%;
-
-      background-color: var(--bar-color);
-
-      transform: scaleX(0);
-      transform-origin: left center;
-      will-change: transform;
     }
   </style>
 
