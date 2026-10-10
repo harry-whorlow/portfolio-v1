@@ -167,7 +167,8 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
     ScrollTrigger.create({
       trigger: title,
       start: 'top 80%',
-      end: 'top 20%',
+      // finish just before the bottom of the line out of the e scrolls off the top of the screen
+      end: `bottom+=${DROP} top+=40`,
       onUpdate: (self) => render(self.progress),
       onRefresh: (self) => render(self.progress),
     });
