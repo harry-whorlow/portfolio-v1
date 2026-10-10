@@ -15,20 +15,50 @@ const faviconSvg = await getImage({ src: faviconSvgSrc, format: 'svg' });
 
 interface Props {
   title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description = "I'm Harry, a software engineer and TanStack maintainer. I build tools, teams, and occasionally climb stuff.",
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-image.jpg', Astro.site);
+const ogImageAlt = "I'm Harry, written above a contour-lined render of the moon.";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Portfolio site for yours truly" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" sizes="any" href={faviconSvg.src} />
     <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" sizes="any" href={faviconSvg.src} />
+
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Harry Whorlow" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Harry Whorlow" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
   </head>
 
   <body data-overlayscrollbars-initialize>
