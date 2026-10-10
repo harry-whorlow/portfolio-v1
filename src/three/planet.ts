@@ -177,6 +177,7 @@ export function createPlanet(
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const gl = renderer.getContext();
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
@@ -314,6 +315,9 @@ export function createPlanet(
     restPose.copy(camera.quaternion);
     camera.rotateX(scrollTilt());
     renderer.render(scene, camera);
+    // Chrome only submits a canvas's GL work when it's composited, so a planet drawing behind opacity: 0 would
+    // queue every frame (and its first uploads) for the GPU to chew through the moment it fades in.
+    gl.flush();
     camera.quaternion.copy(restPose);
   };
 
