@@ -44,7 +44,7 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
             Corbin Crutchley
           </a>{' '}
           messaged me to check my email. There, with an almost holy glow, was the subject line:{' '}
-          <span class="bg-low box-decoration-clone px-1 text-black">
+          <span class="os-highlight px-1 text-black" style={`--highlight-color: ${RAMP[2]}`}>
             @crutchcorn has invited you to join the @TanStack organization
           </span>
           . Since then, it's given me opportunities I'm fortunate to have and friendships I'll be forever thankful for.
@@ -132,6 +132,15 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
 
     #second-section {
     }
+
+    /* swept left to right by background-size; slice makes the sweep run line by line when the span wraps */
+    .os-highlight {
+      background-image: linear-gradient(var(--highlight-color), var(--highlight-color));
+      background-repeat: no-repeat;
+      background-size: 0% 100%;
+      box-decoration-break: slice;
+      -webkit-box-decoration-break: slice;
+    }
     #third-section {
     }
     #forth-section {
@@ -206,6 +215,18 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       document.addEventListener('experience:undrawn', () => {
         setTheme('light');
         gsap.to(fourth, { opacity: 0, duration: 0.6, overwrite: true });
+      });
+
+      // the invite highlight fills over the same scroll range as the Open Source title
+      gsap.to('.os-highlight', {
+        backgroundSize: '100% 100%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.os-title',
+          start: 'top 80%',
+          end: 'top 20%',
+          scrub: true,
+        },
       });
 
       gsap.to('#overlay-secondary', {
