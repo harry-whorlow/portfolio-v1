@@ -32,10 +32,6 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
 </div>
 
 <style>
-  .experience {
-    padding-bottom: calc(var(--reveal-room, 50vh) + 2.5rem);
-  }
-
   .exp-letter {
     position: relative;
     font-family: inherit;
@@ -120,8 +116,10 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
 
     let startY = 0;
     let firstJobY = 0;
-    let spineEnd = 0;
+    let meet = 0;
+    let end = 0;
     let lengths: number[] = [];
+    let tails: number[] = [];
 
     const inkBottomCentre = (letter: HTMLElement, rootRect: DOMRect, baselineY: number) => {
       const style = getComputedStyle(letter);
@@ -145,12 +143,27 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
 
       root.style.setProperty('--spine-x', `${e.x + GAP * 2}px`);
       firstJobY = jobs[0].getBoundingClientRect().top - rootRect.top;
-      spineEnd = jobs[jobs.length - 1].getBoundingClientRect().bottom - rootRect.top;
       startY = e.y;
 
-      lines[0].setAttribute('d', `M${e.x} ${e.y} V${spineEnd}`);
-      lines[1].setAttribute('d', `M${x.x} ${x.y} V${turnX} H${e.x + GAP} V${spineEnd}`);
-      lines[2].setAttribute('d', `M${p.x} ${p.y} V${turnP} H${e.x + GAP * 2} V${spineEnd}`);
+      // the spines fork off to the viewport's left edge, bundled around the middle of the last job, red lowest
+      // so the corners nest without crossing
+      const lastJob = jobs[jobs.length - 1].getBoundingClientRect();
+      const forkMid = (lastJob.top + lastJob.bottom) / 2 - rootRect.top;
+      const spineX = lines.map((_, i) => e.x + GAP * i);
+      const forkY = lines.map((_, i) => forkMid + GAP * (i - (lines.length - 1) / 2));
+      const edge = -rootRect.left;
+
+      lines[0].setAttribute('d', `M${e.x} ${e.y} V${forkY[0]} H${edge}`);
+      lines[1].setAttribute('d', `M${x.x} ${x.y} V${turnX} H${spineX[1]} V${forkY[1]} H${edge}`);
+      lines[2].setAttribute('d', `M${p.x} ${p.y} V${turnP} H${spineX[2]} V${forkY[2]} H${edge}`);
+
+      const lastStart = FILL + (lines.length - 1) * STAGGER;
+      meet = Math.max(FILL + (firstJobY - startY), lastStart + MIN_CATCH_UP);
+
+      // what's left of each line once the tips meet, and the scroll at which the last one reaches the edge
+      const meetY = startY + meet - FILL;
+      tails = lines.map((_, i) => forkY[i] - meetY + (spineX[i] - edge));
+      end = meet + Math.max(...tails);
 
       lengths = lines.map((line) => line.getTotalLength());
       lines.forEach((line, i) => (line.style.strokeDasharray = `${lengths[i]} ${lengths[i]}`));
@@ -161,13 +174,9 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
     const render = (d: number) => {
       letters.forEach((letter, i) => letter.style.setProperty('--fill', `${clamp01((d - i * STAGGER) / FILL) * 100}%`));
 
-      const lastStart = FILL + (lines.length - 1) * STAGGER;
-      const meet = Math.max(FILL + (firstJobY - startY), lastStart + MIN_CATCH_UP);
-      const tail = spineEnd - (startY + meet - FILL);
-
       lines.forEach((line, i) => {
         const start = FILL + i * STAGGER;
-        const toMeet = lengths[i] - tail;
+        const toMeet = lengths[i] - tails[i];
         const drawn =
           d < meet ? toMeet * clamp01((d - start) / (meet - start)) : Math.min(lengths[i], toMeet + (d - meet));
         line.style.strokeDashoffset = `${lengths[i] - drawn}`;
@@ -181,8 +190,11 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
     ScrollTrigger.create({
       trigger: root,
       start: () => `top+=${startY - FILL} ${REVEAL_AT}`,
-      end: () => `top+=${spineEnd} ${REVEAL_AT}`,
+      end: () => `top+=${startY - FILL + end} ${REVEAL_AT}`,
       invalidateOnRefresh: true,
+      // lets the page react once every line has reached the left edge
+      onLeave: () => root.dispatchEvent(new CustomEvent('experience:drawn', { bubbles: true })),
+      onEnterBack: () => root.dispatchEvent(new CustomEvent('experience:undrawn', { bubbles: true })),
       onUpdate: (self) => render(self.progress * (self.end - self.start)),
       onRefresh: (self) => render(self.progress * (self.end - self.start)),
     });

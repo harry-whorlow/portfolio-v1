@@ -25,91 +25,89 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       <HorizontalProgress colors={progressColors} />
     </section>
 
-    <div id="second-section">
-      <section class="flex min-h-screen flex-col">
-        <TextScroller />
+    <section id="second-section" class="flex min-h-screen flex-col">
+      <TextScroller />
 
-        <div class="p-10">
-          <h1 class="mt-10 text-[10rem] leading-none font-bold">Open Source</h1>
+      <div class="p-10">
+        <h1 class="mt-10 text-[10rem] leading-none font-bold">Open Source</h1>
 
-          <p class="mt-4 w-200 text-base">
-            I've been contributing to open source for two years now, with commits across the ecosystem and encounters
-            with developers all over the globe.
+        <p class="mt-4 w-200 text-base">
+          I've been contributing to open source for two years now, with commits across the ecosystem and encounters with
+          developers all over the globe.
+        </p>
+
+        <p class="mt-4 w-200 text-base">
+          Most of that time has been spent with TanStack. On 07/03/25, after a few months of implementing features,
+          fixing bugs and documenting APIs,{' '}
+          <a href="https://www.linkedin.com/in/corbincrutchley/" target="_blank" class="text-high underline">
+            Corbin Crutchley
+          </a>{' '}
+          messaged me to check my email. There, with an almost holy glow, was the subject line:{' '}
+          <span class="bg-low box-decoration-clone px-1 text-black">
+            @crutchcorn has invited you to join the @TanStack organization
+          </span>
+          . Since then, it's given me opportunities I'm fortunate to have and friendships I'll be forever thankful for.
+        </p>
+
+        <p class="mt-4 w-200 text-base">
+          On its face, open source is a strange thing: people giving up their free time so faceless mega corporations™
+          can profit from their labour. But there's something to it, something about programming in the dead of night on
+          features a developer somewhere in the world will use. You'll probably never meet them, but for a moment,
+          you're building something together.
+        </p>
+      </div>
+    </section>
+
+    <section id="third-section" class="flex flex-col">
+      <ExperienceTimeline colors={[RAMP[2], RAMP[4], RAMP[6]]}>
+        <Job company="AllMyHomes" dates="01/05/22 - 17/07/22">
+          <p>
+            I think about AllMyHomes more than you'd expect for a three-month role. I was fresh out of a bootcamp and
+            asked to migrate the micro-frontends I was responsible for into a monolith repository. When my senior,{' '}
+            <a href="https://www.linkedin.com/in/lukasz-milik/" target="_blank" class="text-high underline">
+              Łukasz
+            </a>
+            , said to "just copy over the APIs," I did, I copied thirteen thousand lines verbatim. When he said he'd
+            speak to my skip-level manager after taking one look at the PR, I was certain I was finished. What happened
+            instead was training and a second chance. I'm not the greatest developer in the world, but I'm a competent
+            one now, and I owe much of that to Łukasz.
           </p>
 
-          <p class="mt-4 w-200 text-base">
-            Most of that time has been spent with TanStack. On 07/03/25, after a few months of implementing features,
-            fixing bugs and documenting APIs,{' '}
-            <a href="https://www.linkedin.com/in/corbincrutchley/" target="_blank" class="text-high underline">
-              Corbin Crutchley
-            </a>{' '}
-            messaged me to check my email. There, with an almost holy glow, was the subject line:{' '}
-            <span class="bg-low box-decoration-clone px-1 text-black">
-              @crutchcorn has invited you to join the @TanStack organization
-            </span>
-            . Since then, it's given me opportunities I'm fortunate to have and friendships I'll be forever thankful
-            for.
+          <p>
+            Unfortunately my time at AllMyHomes was cut short, as the summer of 22 drew to a close, and governments
+            around the world were increasing interest rates to fight inflation, the funding was cut. Three rounds of
+            layoffs later the company no longer exists.
+          </p>
+        </Job>
+
+        <Job company="Technoly" dates="01/09/22 - PRESENT">
+          <p>
+            Technoly is where I really progressed as a developer. I was given the freedom to make mistakes and had very
+            little oversight for the majority of my time here. Decisions I made years ago as a junior developer
+            frequently show up again in tasks I have today. I feel that oftentimes we learn the most as developers when
+            we are confronted with decisions we made in the past, a lesson that many developers are robbed of if their
+            time at a company is on the shorter side.
           </p>
 
-          <p class="mt-4 w-200 text-base">
-            On its face, open source is a strange thing: people giving up their free time so faceless mega corporations™
-            can profit from their labour. But there's something to it, something about programming in the dead of night
-            on features a developer somewhere in the world will use. You'll probably never meet them, but for a moment,
-            you're building something together.
+          <p>
+            I have learnt a lot here: I have become confident in my developer skills, deepened my understanding of
+            advanced TypeScript, and even became a maintainer of TanStack... an organisation I once revered as a junior
+            developer, and still do.
           </p>
-        </div>
-      </section>
-    </div>
+        </Job>
 
-    <div id="third-section">
-      <section class="flex min-h-screen flex-col">
-        <ExperienceTimeline colors={[RAMP[2], RAMP[4], RAMP[6]]}>
-          <Job company="AllMyHomes" dates="01/05/22 - 17/07/22">
-            <p>
-              I think about AllMyHomes more than you'd expect for a three-month role. I was fresh out of a bootcamp and
-              asked to migrate the micro-frontends I was responsible for into a monolith repository. When my senior,{' '}
-              <a href="https://www.linkedin.com/in/lukasz-milik/" target="_blank" class="text-high underline">
-                Łukasz
-              </a>
-              , said to "just copy over the APIs," I did, I copied thirteen thousand lines verbatim. When he said he'd
-              speak to my skip-level manager after taking one look at the PR, I was certain I was finished. What
-              happened instead was training and a second chance. I'm not the greatest developer in the world, but I'm a
-              competent one now, and I owe much of that to Łukasz.
-            </p>
+        <Job company="TO BE CONTINUED..." dates="PRESENT - FUTURE">
+          <p>My story is still developing, lets see where I go next.</p>
+        </Job>
+      </ExperienceTimeline>
+    </section>
 
-            <p>
-              Unfortunately my time at AllMyHomes was cut short, as the summer of 22 drew to a close, and governments
-              around the world were increasing interest rates to fight inflation, the funding was cut. Three rounds of
-              layoffs later the company no longer exists.
-            </p>
-          </Job>
-
-          <Job company="Technoly" dates="01/09/22 - PRESENT">
-            <p>
-              Technoly is where I really progressed as a developer. I was given the freedom to make mistakes and had
-              very little oversight for the majority of my time here. Decisions I made years ago as a junior developer
-              frequently show up again in tasks I have today. I feel that oftentimes we learn the most as developers
-              when we are confronted with decisions we made in the past, a lesson that many developers are robbed of if
-              their time at a company is on the shorter side.
-            </p>
-
-            <p>
-              I have learnt a lot here: I have become confident in my developer skills, deepened my understanding of
-              advanced TypeScript, and even became a maintainer of TanStack... an organisation I once revered as a
-              junior developer, and still do.
-            </p>
-          </Job>
-
-          <Job company="TO BE CONTINUED..." dates="PRESENT - FUTURE">
-            <p>My story is still developing, lets see where I go next.</p>
-          </Job>
-        </ExperienceTimeline>
-      </section>
-    </div>
-
-    <div id="forth-section">
-      <section class="flex min-h-screen flex-col"></section>
-    </div>
+    <section id="forth-section" class="flex min-h-screen flex-col">
+      <div class="p-10">
+        <h1 class="mt-10 text-[5rem] leading-none font-bold">So Lets work,</h1>
+        <h1 class="text-[10rem] leading-none font-bold">TOGETHER</h1>
+      </div>
+    </section>
   </div>
 
   <style>
@@ -184,6 +182,17 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
 
       // staggered so the bars arrive one after another, together spanning the whole pin
       intro.to('.progress-bar', { scaleX: 1, duration: 0.8, stagger: 0.1 }, 0);
+
+      // once the experience lines reach the left edge, go back to dark and bring in the next section
+      const fourth = document.querySelector<HTMLElement>('#forth-section')!;
+      document.addEventListener('experience:drawn', () => {
+        setTheme('dark');
+        gsap.to(fourth, { opacity: 1, duration: 0.6, overwrite: true });
+      });
+      document.addEventListener('experience:undrawn', () => {
+        setTheme('light');
+        gsap.to(fourth, { opacity: 0, duration: 0.6, overwrite: true });
+      });
 
       gsap.to('#overlay-secondary', {
         opacity: 1,
