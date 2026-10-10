@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { RAMP } from "./palette";
 
-const CONTOUR_INTERVAL_KM = 0.25;
 const MAJOR_EVERY = 5;
 // Seconds for the contours to climb one major interval; a whole major step loops seamlessly.
 const CONTOUR_FLOW_SECONDS = 24;
@@ -16,14 +15,20 @@ export interface TopoMaterial extends THREE.MeshBasicMaterial {
   setHeightMap(heightMap: THREE.DataTexture): void;
 }
 
-export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, maxKm: number, heatmap: boolean): TopoMaterial {
+export function createTopoMaterial(
+  heightMap: THREE.DataTexture,
+  minKm: number,
+  maxKm: number,
+  heatmap: boolean,
+  contourIntervalKm = 0.25,
+): TopoMaterial {
   const uniforms = {
     uHeightMap: { value: heightMap },
     uHeightMapNext: { value: heightMap },
     uBlend: { value: 0 },
     uMinKm: { value: minKm },
     uMaxKm: { value: maxKm },
-    uContourInterval: { value: CONTOUR_INTERVAL_KM },
+    uContourInterval: { value: contourIntervalKm },
     uContourShift: { value: 0 },
     uRamp: { value: RAMP.map((hex) => new THREE.Color(hex)) },
     uHeatmap: { value: heatmap },
@@ -141,7 +146,7 @@ export function createTopoMaterial(heightMap: THREE.DataTexture, minKm: number, 
 
   material.setTime = (seconds) => {
     const loop = (seconds / CONTOUR_FLOW_SECONDS) % 1;
-    uniforms.uContourShift.value = loop * CONTOUR_INTERVAL_KM * MAJOR_EVERY;
+    uniforms.uContourShift.value = loop * contourIntervalKm * MAJOR_EVERY;
   };
 
   material.setBlend = (t) => {

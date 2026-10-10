@@ -103,8 +103,10 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       </ExperienceTimeline>
     </section>
 
-    <section id="forth-section" class="flex min-h-screen flex-col">
-      <div class="p-10">
+    <section id="forth-section" class="relative flex h-screen flex-col overflow-hidden">
+      <canvas id="mars-canvas" class="absolute inset-0 block h-full w-full" />
+
+      <div class="pointer-events-none relative p-10">
         <h1 class="mt-10 text-[5rem] leading-none font-bold">So Lets work,</h1>
         <h1 class="text-[10rem] leading-none font-bold">TOGETHER</h1>
       </div>
@@ -148,6 +150,17 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     document.addEventListener('DOMContentLoaded', () => {
       const canvas = document.querySelector<HTMLCanvasElement>('#moon-canvas');
       const moon = canvas && createMoon(canvas);
+
+      // Mars sits at the bottom of the page, so its code and heightmaps wait until the moon is up and the
+      // browser is idle, keeping them off the critical path.
+      const marsCanvas = document.querySelector<HTMLCanvasElement>('#mars-canvas');
+      const whenIdle = (callback: () => void) =>
+        'requestIdleCallback' in window ? requestIdleCallback(callback, { timeout: 4000 }) : setTimeout(callback, 1000);
+      if (marsCanvas) {
+        Promise.resolve(moon?.ready).then(() =>
+          whenIdle(() => import('../three/mars').then(({ createMars }) => createMars(marsCanvas)))
+        );
+      }
       const theme = document.querySelector<HTMLElement>('.theme')!;
       const setTheme = (value: 'dark' | 'light') => (theme.dataset.theme = value);
 

@@ -1,0 +1,11 @@
+{
+  "file": "mars-4096x2048.bin.gz",
+  "cols": 4096,
+  "rows": 2048,
+  "vertexCount": 8394753,
+  "format": "int16le-rowdelta-split-gzip",
+  "unitsPerKm": 1000,
+  "radiusKm": 3396.19,
+  "minKm": -8.172,
+  "maxKm": 21.184
+}

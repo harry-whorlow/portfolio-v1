@@ -4,16 +4,22 @@ import zlib from 'node:zlib';
 import { parseArgs } from 'node:util';
 
 const DATA_DIR = path.resolve(import.meta.dirname, '../src/three/data');
-const SOURCE = { file: 'moon-4096x2048.bin', cols: 4096, rows: 2048, unitsPerKm: 2000 };
-const RADIUS_KM = 1737.4;
+const BODIES = {
+  moon: { file: 'moon-4096x2048.bin', cols: 4096, rows: 2048, unitsPerKm: 2000, radiusKm: 1737.4 },
+  mars: { file: 'mars-4096x2048.bin', cols: 4096, rows: 2048, unitsPerKm: 1000, radiusKm: 3396.19 },
+};
 
 const { values } = parseArgs({
   options: {
+    body: { type: 'string', default: 'moon' },
     downsample: { type: 'string', default: '1' },
     step: { type: 'string', default: '0.5' }, // metres per stored unit
-    name: { type: 'string', default: 'moon' },
+    name: { type: 'string' },
   },
 });
+const SOURCE = BODIES[values.body];
+if (!SOURCE) throw new Error(`Unknown body "${values.body}", expected one of ${Object.keys(BODIES).join(', ')}`);
+const name = values.name ?? values.body;
 const factor = Number(values.downsample);
 const stepM = Number(values.step);
 
@@ -49,6 +55,7 @@ for (let r = 0; r <= rows; r++) {
       }
     }
     const value = Math.round((sum / weight) * toUnits);
+    if (value < -32768 || value > 32767) throw new Error(`${value} overflows int16, use a coarser --step`);
     heights[r * stride + c] = value;
     min = Math.min(min, value);
     max = Math.max(max, value);
@@ -68,7 +75,7 @@ for (let r = 0; r <= rows; r++) {
   }
 }
 
-const file = `${values.name === 'moon' ? `moon-${cols}x${rows}` : values.name}.bin.gz`;
+const file = `${name === values.body ? `${values.body}-${cols}x${rows}` : name}.bin.gz`;
 const gz = zlib.gzipSync(packed, { level: 9 });
 fs.writeFileSync(path.join(DATA_DIR, file), gz);
 
@@ -79,10 +86,10 @@ const meta = {
   vertexCount: n,
   format: 'int16le-rowdelta-split-gzip',
   unitsPerKm,
-  radiusKm: RADIUS_KM,
+  radiusKm: SOURCE.radiusKm,
   minKm: min / unitsPerKm,
   maxKm: max / unitsPerKm,
 };
-fs.writeFileSync(path.join(DATA_DIR, `${values.name}.json`), JSON.stringify(meta, null, 2) + '\n');
+fs.writeFileSync(path.join(DATA_DIR, `${name}.json`), JSON.stringify(meta, null, 2) + '\n');
 
 console.log(`${file}: ${(raw.length / 1e6).toFixed(2)} MB -> ${(gz.length / 1e6).toFixed(2)} MB`);
