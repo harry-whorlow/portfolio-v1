@@ -18,9 +18,9 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     <section id="first-section" class="first-section relative h-screen w-full overflow-hidden">
       <canvas id="moon-canvas" class="block h-full w-full" />
 
-      <div class="pointer-events-none absolute top-0 left-0 p-8 md:p-12">
-        <h1 class="text-[10rem] leading-none font-bold">I'm Harry,</h1>
-        <p class="mt-4 text-base">I build tools, teams, and occasionally climb stuff.</p>
+      <div class="pointer-events-none absolute top-0 left-0 p-5 md:p-12">
+        <h1 class="text-[17vw] leading-none font-bold md:text-[10rem]">I'm Harry,</h1>
+        <p class="mt-4 text-sm md:text-base">I build tools, teams, and occasionally climb stuff.</p>
       </div>
 
       <HorizontalProgress colors={progressColors} />
@@ -29,15 +29,15 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     <section id="second-section" class="flex min-h-screen flex-col">
       <TextScroller />
 
-      <div class="p-10">
+      <div class="p-5 md:p-10">
         <OpenSourceTitle color={RAMP[4]} />
 
-        <p class="mt-4 w-200 text-base">
+        <p class="mt-4 w-full text-sm md:w-200 md:text-base">
           I've been contributing to open source for two years now, with commits across the ecosystem and encounters with
           developers all over the globe.
         </p>
 
-        <p class="mt-4 w-200 text-base">
+        <p class="mt-4 w-full text-sm md:w-200 md:text-base">
           Most of that time has been spent with TanStack. On 07/03/25, after a few months of implementing features,
           fixing bugs and documenting APIs,{' '}
           <a href="https://www.linkedin.com/in/corbincrutchley/" target="_blank" class="text-high underline">
@@ -50,7 +50,7 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
           . Since then, it's given me opportunities I'm fortunate to have and friendships I'll be forever thankful for.
         </p>
 
-        <p class="mt-4 w-200 text-base">
+        <p class="mt-4 w-full text-sm md:w-200 md:text-base">
           On its face, open source is a strange thing: people giving up their free time so faceless mega corporations™
           can profit from their labour. But there's something to it, something about programming in the dead of night on
           features a developer somewhere in the world will use. You'll probably never meet them, but for a moment,
@@ -106,9 +106,9 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     <section id="forth-section" class="relative flex h-screen flex-col overflow-hidden">
       <canvas id="mars-canvas" class="absolute inset-0 block h-full w-full" />
 
-      <div class="pointer-events-none relative p-10">
-        <h1 class="mt-10 text-[5rem] leading-none font-bold">So Lets work,</h1>
-        <h1 class="text-[10rem] leading-none font-bold">TOGETHER</h1>
+      <div class="pointer-events-none relative p-5 md:p-10">
+        <h1 class="mt-10 text-[9vw] leading-none font-bold md:text-[5rem]">So Lets work,</h1>
+        <h1 class="text-[15vw] leading-none font-bold md:text-[10rem]">TOGETHER</h1>
       </div>
     </section>
   </div>

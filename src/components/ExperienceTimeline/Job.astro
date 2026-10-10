@@ -8,10 +8,10 @@ const { company, dates } = Astro.props;
 ---
 
 <li class="exp-job">
-  <h3 class="text-4xl font-bold">{company}</h3>
-  <p class="mt-2 text-base">{dates}</p>
+  <h3 class="text-2xl font-bold md:text-4xl">{company}</h3>
+  <p class="mt-2 text-sm md:text-base">{dates}</p>
   {Astro.slots.has('default') && (
-    <div class="exp-description mt-4 w-200 text-base">
+    <div class="exp-description mt-4 w-full text-sm md:w-200 md:text-base">
       <slot />
     </div>
   )}

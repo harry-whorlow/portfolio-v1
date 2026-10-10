@@ -236,7 +236,8 @@ export function createPlanet(
   const dragVelocity = new THREE.Vector2();
 
   const onPointerDown = (e: PointerEvent) => {
-    if (dragPointer !== null || e.button !== 0) return;
+    // touch drags are left to the page so phones can scroll past the planet
+    if (dragPointer !== null || e.button !== 0 || e.pointerType === 'touch') return;
     dragPointer = e.pointerId;
     lastX = e.clientX;
     lastY = e.clientY;
@@ -253,7 +254,6 @@ export function createPlanet(
   const onPointerUp = (e: PointerEvent) => {
     if (e.pointerId === dragPointer) dragPointer = null;
   };
-  canvas.style.touchAction = 'pan-y';
   canvas.addEventListener('pointerdown', onPointerDown);
   canvas.addEventListener('pointermove', onPointerMove);
   canvas.addEventListener('pointerup', onPointerUp);

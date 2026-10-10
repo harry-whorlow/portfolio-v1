@@ -10,7 +10,7 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
 );
 ---
 
-<h1 class="os-title mt-10 text-[10rem] leading-none font-bold" aria-label="Open Source" style={`--fill-color: ${color}`}>
+<h1 class="os-title mt-10 text-[12vw] leading-none font-bold md:text-[10rem]" aria-label="Open Source" style={`--fill-color: ${color}`}>
   <span class="os-line" aria-hidden="true"></span>
   {letters.map(({ char, wordStart }) => (
     <span class:list={['os-letter', { 'os-word-start': wordStart }]} data-char={char} aria-hidden="true">
@@ -93,8 +93,9 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // how far (px) the line drops out of the e before heading right
-  const DROP = 64;
+  // how far (px) the line drops out of the e before heading right; on phones the copy sits right under the e,
+  // so the line runs through the gap above it instead
+  const drop = () => (window.matchMedia('(width < 48rem)').matches ? 14 : 64);
 
   const clamp = (value: number, max: number) => gsap.utils.clamp(0, max, value);
 
@@ -137,7 +138,7 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
 
       // then carries on out of the bottom of the e, straight down, then to the right edge of the screen
       const offRight = document.documentElement.clientWidth - titleLeft;
-      stream.setAttribute('d', `M${(e.l + e.r) / 2} ${baseY} V${baseY + DROP} H${offRight}`);
+      stream.setAttribute('d', `M${(e.l + e.r) / 2} ${baseY} V${baseY + drop()} H${offRight}`);
       const length = stream.getTotalLength();
       stream.style.strokeDasharray = `${length} ${length}`;
 
@@ -168,7 +169,8 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
       trigger: title,
       start: 'top 80%',
       // finish just before the bottom of the line out of the e scrolls off the top of the screen
-      end: `bottom+=${DROP} top+=40`,
+      end: () => `bottom+=${drop()} top+=40`,
+      invalidateOnRefresh: true,
       onUpdate: (self) => render(self.progress),
       onRefresh: (self) => render(self.progress),
     });

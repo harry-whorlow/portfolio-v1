@@ -29,6 +29,7 @@
 <style>
   #text-scroller {
     margin-top: 7rem;
+    overflow-x: clip;
   }
   .big-text {
     font-size: 8rem;
@@ -54,6 +55,25 @@
 
   .rail {
     display: flex;
+  }
+
+  @media (width < 48rem) {
+    #text-scroller {
+      margin-top: 4rem;
+    }
+
+    .big-text {
+      font-size: 3.5rem;
+      line-height: 3.5rem;
+    }
+
+    .small-text {
+      font-size: 1rem;
+    }
+
+    span {
+      margin-right: 1.25rem;
+    }
   }
 </style>
 

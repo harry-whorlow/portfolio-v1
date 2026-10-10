@@ -36,6 +36,13 @@ interface Props {}
 
     z-index: 101;
   }
+
+  /* touch screens have no pointer to follow */
+  @media (hover: none), (pointer: coarse) {
+    .mouse-fade-animation {
+      display: none;
+    }
+  }
 </style>
 
 <script>
@@ -43,7 +50,7 @@ interface Props {}
 
   let isMobile = false;
   if (typeof window !== 'undefined') {
-    isMobile = window.matchMedia('(any-hover: none)').matches;
+    isMobile = window.matchMedia('(hover: none), (pointer: coarse)').matches;
   }
 
   const mouse = window.document.getElementById('mouse');

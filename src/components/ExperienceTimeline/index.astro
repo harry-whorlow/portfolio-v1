@@ -8,8 +8,8 @@ const { colors } = Astro.props;
 const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
 ---
 
-<div class="experience relative p-10">
-  <h1 class="mt-10 text-[10rem] leading-none font-bold">
+<div class="experience relative p-5 md:p-10">
+  <h1 class="mt-10 text-[15vw] leading-none font-bold md:text-[10rem]">
     Work
     <br />
     {letters.map(({ char, color }) => (
@@ -79,6 +79,14 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
 
     margin-top: 10rem;
     padding-left: calc(var(--spine-x, 0px) + 4rem);
+  }
+
+  @media (width < 48rem) {
+    .exp-jobs {
+      gap: 5rem;
+      margin-top: 6rem;
+      padding-left: calc(var(--spine-x, 0px) + 1.5rem);
+    }
   }
 </style>
 
