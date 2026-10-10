@@ -1,0 +1,175 @@
+---
+interface Props {
+  color: string;
+}
+
+const { color } = Astro.props;
+
+const letters = [...'Open Source'].flatMap((char, i, all) =>
+  char === ' ' ? [] : [{ char, wordStart: all[i - 1] === ' ' }]
+);
+---
+
+<h1 class="os-title mt-10 text-[10rem] leading-none font-bold" aria-label="Open Source" style={`--fill-color: ${color}`}>
+  <span class="os-line" aria-hidden="true"></span>
+  {letters.map(({ char, wordStart }) => (
+    <span class:list={['os-letter', { 'os-word-start': wordStart }]} data-char={char} aria-hidden="true">
+      {char}
+    </span>
+  ))}
+  <span class="os-baseline" aria-hidden="true"></span>
+
+  <svg class="os-stream-svg" aria-hidden="true">
+    <path class="os-stream" />
+  </svg>
+</h1>
+
+<style>
+  .os-title {
+    position: relative;
+  }
+
+  .os-letter {
+    position: relative;
+    display: inline-block;
+    font-family: inherit;
+  }
+
+  .os-word-start {
+    margin-left: 0.25em;
+  }
+
+  /* a coloured copy of the letter, revealed left to right as --fill goes 0% -> 100% */
+  .os-letter::after {
+    content: attr(data-char);
+    content: attr(data-char) / '';
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    color: var(--fill-color);
+    font-family: inherit;
+    clip-path: inset(0 calc(100% - var(--fill, 0%)) 0 0);
+  }
+
+  .os-line {
+    position: absolute;
+    height: 2px;
+
+    background-color: var(--fill-color);
+
+    transform: scaleX(0);
+    transform-origin: left center;
+    pointer-events: none;
+  }
+
+  .os-baseline {
+    display: inline-block;
+    width: 0;
+    height: 0;
+  }
+
+  .os-stream-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .os-stream {
+    fill: none;
+    stroke: var(--fill-color);
+    stroke-width: 2;
+    stroke-dasharray: 0 100000;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // how far (px) the line drops out of the e before heading right
+  const DROP = 64;
+
+  const clamp = (value: number, max: number) => gsap.utils.clamp(0, max, value);
+
+  document.fonts.ready.then(() => {
+    const title = document.querySelector<HTMLElement>('.os-title')!;
+    const line = title.querySelector<HTMLElement>('.os-line')!;
+    const baseline = title.querySelector<HTMLElement>('.os-baseline')!;
+    const stream = title.querySelector<SVGPathElement>('.os-stream')!;
+    const letters = gsap.utils.toArray<HTMLElement>('.os-letter', title);
+
+    const ctx = document.createElement('canvas').getContext('2d')!;
+
+    // in title coords: where the fill starts, and how long each leg is (line in, fill across, line out)
+    let fillStart = 0;
+    let legs = [0, 0, 0];
+
+    const ink = (letter: HTMLElement) => {
+      const style = getComputedStyle(letter);
+      ctx.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const m = ctx.measureText(letter.dataset.char!);
+      return {
+        l: letter.offsetLeft - m.actualBoundingBoxLeft,
+        r: letter.offsetLeft + m.actualBoundingBoxRight,
+        h: m.actualBoundingBoxAscent,
+      };
+    };
+
+    const layout = () => {
+      const baseY = baseline.offsetTop;
+      const titleLeft = title.getBoundingClientRect().left;
+      const o = ink(letters[0]);
+      const e = ink(letters[letters.length - 1]);
+
+      // the line comes in from the page's left edge and meets the top of the O
+      const edge = -titleLeft;
+      const oTop = (o.l + o.r) / 2;
+      line.style.left = `${edge}px`;
+      line.style.top = `${baseY - o.h - 1}px`;
+      line.style.width = `${oTop - edge}px`;
+
+      // then carries on out of the bottom of the e, straight down, then to the right edge of the screen
+      const offRight = document.documentElement.clientWidth - titleLeft;
+      stream.setAttribute('d', `M${(e.l + e.r) / 2} ${baseY} V${baseY + DROP} H${offRight}`);
+      const length = stream.getTotalLength();
+      stream.style.strokeDasharray = `${length} ${length}`;
+
+      fillStart = o.l;
+      legs = [oTop - edge, e.r - o.l, length];
+    };
+
+    // one tip runs the whole way at a steady pace: in along the line, across the letters, then out of the e
+    const render = (progress: number) => {
+      const [lineIn, across, out] = legs;
+      const d = progress * (lineIn + across + out);
+
+      line.style.transform = `scaleX(${clamp(d / lineIn, 1)})`;
+
+      const tip = fillStart + clamp(d - lineIn, across);
+      letters.forEach((letter) =>
+        letter.style.setProperty('--fill', `${clamp((tip - letter.offsetLeft) / letter.offsetWidth, 1) * 100}%`)
+      );
+
+      stream.style.strokeDashoffset = `${out - clamp(d - lineIn - across, out)}`;
+    };
+
+    layout();
+    render(0);
+    ScrollTrigger.addEventListener('refreshInit', layout);
+
+    ScrollTrigger.create({
+      trigger: title,
+      start: 'top 80%',
+      end: 'top 20%',
+      onUpdate: (self) => render(self.progress),
+      onRefresh: (self) => render(self.progress),
+    });
+  });
+</script>

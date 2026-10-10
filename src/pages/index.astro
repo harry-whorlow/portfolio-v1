@@ -5,6 +5,7 @@ import TextScroller from '../components/TextScroller/index.astro';
 import HorizontalProgress from '../components/HorizontalProgress/index.astro';
 import ExperienceTimeline from '../components/ExperienceTimeline/index.astro';
 import Job from '../components/ExperienceTimeline/Job.astro';
+import OpenSourceTitle from '../components/OpenSourceTitle/index.astro';
 
 import { RAMP } from '../three/palette';
 
@@ -29,7 +30,7 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       <TextScroller />
 
       <div class="p-10">
-        <h1 class="mt-10 text-[10rem] leading-none font-bold">Open Source</h1>
+        <OpenSourceTitle color={RAMP[4]} />
 
         <p class="mt-4 w-200 text-base">
           I've been contributing to open source for two years now, with commits across the ecosystem and encounters with
