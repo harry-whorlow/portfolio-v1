@@ -28,6 +28,7 @@ export interface PlanetBody {
   name: string;
   exaggeration: number;
   contourIntervalKm: number;
+  colorUrl?: string;
   lite: { meta: HeightMeta; url: string };
   full: { meta: HeightMeta; url: string };
 }
@@ -51,12 +52,15 @@ const UPGRADE_FADE_SECONDS = 2;
 
 export interface PlanetOptions {
   heatmap?: boolean;
+  material?: boolean;
+  backdrop?: (home: THREE.Camera) => THREE.Object3D;
   distanceKm?: number;
   scene?: SceneState;
 }
 
 export interface Planet {
   setHeatmap(enabled: boolean): void;
+  setMaterial(enabled: boolean): void;
   setDistance(km: number): void;
   setScroll(progress: number): void;
   /** Resolves once the first heightmap is on screen. */
@@ -173,7 +177,7 @@ function createPlanetGeometry(
 export function createPlanet(
   canvas: HTMLCanvasElement,
   body: PlanetBody,
-  { heatmap = true, distanceKm = 1300, scene: start }: PlanetOptions = {}
+  { heatmap = true, material = false, distanceKm = 1300, scene: start, backdrop: createBackdrop }: PlanetOptions = {}
 ): Planet {
   const { meta: fullMeta, url: fullUrl } = body.full;
   const { meta: liteMeta, url: liteUrl } = body.lite;
@@ -222,6 +226,15 @@ export function createPlanet(
   }
   camera.position.copy(start ? new THREE.Vector3(...start.camera.position) : homePosition);
   camera.quaternion.copy(start ? new THREE.Quaternion(...start.camera.quaternion) : homeQuaternion);
+
+  let backdrop: THREE.Object3D | undefined;
+  if (createBackdrop) {
+    const home = new THREE.Camera();
+    home.position.copy(homePosition);
+    home.quaternion.copy(homeQuaternion);
+    backdrop = createBackdrop(home);
+    scene.add(backdrop);
+  }
 
   const resize = () => {
     const { clientWidth, clientHeight } = canvas;
@@ -338,6 +351,7 @@ export function createPlanet(
   let disposed = false;
   let mesh: THREE.Mesh<THREE.BufferGeometry, ReturnType<typeof createTopoMaterial>> | undefined;
   let heightTexture: THREE.DataTexture | undefined;
+  let colorMap: THREE.Texture | undefined;
   let upgrade: { t: number; geometry: THREE.BufferGeometry; heightTexture: THREE.DataTexture } | undefined;
 
   const showHeights = (heights: Int16Array, meta: HeightMeta) => {
@@ -348,6 +362,8 @@ export function createPlanet(
         built.geometry,
         createTopoMaterial(heightTexture, fullMeta.minKm, fullMeta.maxKm, heatmap, body.contourIntervalKm)
       );
+      mesh.material.setMaterial(material);
+      if (colorMap) mesh.material.setColorMap(colorMap);
       planet.add(mesh);
       return;
     }
@@ -374,6 +390,20 @@ export function createPlanet(
     previous.geometry.dispose();
     previous.heightTexture?.dispose();
   };
+
+  // Loads alongside the heights; until it lands the contours keep the heat map or grey ramp.
+  if (body.colorUrl) {
+    new THREE.TextureLoader().loadAsync(body.colorUrl).then((texture) => {
+      if (disposed) return texture.dispose();
+      texture.colorSpace = THREE.SRGBColorSpace;
+      // Row 0 is the north pole, matching gridUv.y = 0.
+      texture.flipY = false;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.anisotropy = 4;
+      colorMap = texture;
+      mesh?.material.setColorMap(texture);
+    });
+  }
 
   let markReady = () => {};
   const ready = new Promise<void>((resolve) => (markReady = resolve));
@@ -402,6 +432,10 @@ export function createPlanet(
       heatmap = enabled;
       mesh?.material.setHeatmap(enabled);
     },
+    setMaterial(enabled) {
+      material = enabled;
+      mesh?.material.setMaterial(enabled);
+    },
     setDistance,
     ready,
     setScroll(progress) {
@@ -419,8 +453,14 @@ export function createPlanet(
       mesh?.geometry.dispose();
       mesh?.material.dispose();
       heightTexture?.dispose();
+      colorMap?.dispose();
       upgrade?.geometry.dispose();
       upgrade?.heightTexture.dispose();
+      backdrop?.traverse((object) => {
+        if (!(object instanceof THREE.Mesh)) return;
+        object.geometry.dispose();
+        object.material.dispose();
+      });
       renderer.dispose();
     },
   };

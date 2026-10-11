@@ -1,14 +1,14 @@
-import * as THREE from "three";
-import { RAMP } from "./palette";
+import * as THREE from 'three';
+import { RAMP } from './palette';
 
 const MAJOR_EVERY = 5;
-// Seconds for the contours to climb one major interval; a whole major step loops seamlessly.
 const CONTOUR_FLOW_SECONDS = 24;
-const FILL_COLOR = "#090b10";
+const FILL_COLOR = '#090b10';
 
 export interface TopoMaterial extends THREE.MeshBasicMaterial {
   setHeatmap(enabled: boolean): void;
-  /** Starts blending toward `heightMap`; the geometry must carry a matching `nextPosition` attribute. */
+  setMaterial(enabled: boolean): void;
+  setColorMap(colorMap: THREE.Texture): void;
   setNextHeightMap(heightMap: THREE.DataTexture): void;
   setBlend(t: number): void;
   setTime(seconds: number): void;
@@ -20,7 +20,7 @@ export function createTopoMaterial(
   minKm: number,
   maxKm: number,
   heatmap: boolean,
-  contourIntervalKm = 0.25,
+  contourIntervalKm = 0.25
 ): TopoMaterial {
   const uniforms = {
     uHeightMap: { value: heightMap },
@@ -32,6 +32,9 @@ export function createTopoMaterial(
     uContourShift: { value: 0 },
     uRamp: { value: RAMP.map((hex) => new THREE.Color(hex)) },
     uHeatmap: { value: heatmap },
+    uColorMap: { value: null as THREE.Texture | null },
+    uHasColorMap: { value: false },
+    uMaterial: { value: false },
     uFillColor: { value: new THREE.Color(FILL_COLOR) },
   };
 
@@ -42,17 +45,17 @@ export function createTopoMaterial(
 
     shader.vertexShader = shader.vertexShader
       .replace(
-        "#include <common>",
-        "#include <common>\nattribute vec2 gridUv;\nattribute vec3 nextPosition;\nuniform float uBlend;\nvarying vec2 vGridUv;",
+        '#include <common>',
+        '#include <common>\nattribute vec2 gridUv;\nattribute vec3 nextPosition;\nuniform float uBlend;\nvarying vec2 vGridUv;'
       )
       .replace(
-        "#include <begin_vertex>",
-        "#include <begin_vertex>\ntransformed = mix(position, nextPosition, uBlend);\nvGridUv = gridUv;",
+        '#include <begin_vertex>',
+        '#include <begin_vertex>\ntransformed = mix(position, nextPosition, uBlend);\nvGridUv = gridUv;'
       );
 
     shader.fragmentShader = shader.fragmentShader
       .replace(
-        "#include <common>",
+        '#include <common>',
         /* glsl */ `#include <common>
         #define RAMP_SIZE ${RAMP.length}
         uniform sampler2D uHeightMap;
@@ -64,6 +67,9 @@ export function createTopoMaterial(
         uniform float uContourShift;
         uniform vec3 uRamp[RAMP_SIZE];
         uniform bool uHeatmap;
+        uniform sampler2D uColorMap;
+        uniform bool uHasColorMap;
+        uniform bool uMaterial;
         uniform vec3 uFillColor;
         varying vec2 vGridUv;
 
@@ -114,26 +120,43 @@ export function createTopoMaterial(
           float d = abs(fract(t - 0.5) - 0.5) / fwidth(t);
           float halfWidth = 0.5 * width;
           return clamp(min(d + 0.5, halfWidth) - max(d - 0.5, -halfWidth), 0.0, 1.0);
-        }`,
+        }`
       )
       .replace(
-        "#include <opaque_fragment>",
+        '#include <opaque_fragment>',
         /* glsl */ `float vHeight = smoothHeight(uHeightMap, vGridUv);
         if (uBlend > 0.0) vHeight = mix(vHeight, smoothHeight(uHeightMapNext, vGridUv), uBlend);
         float heightT = clamp((vHeight - uMinKm) / (uMaxKm - uMinKm), 0.0, 1.0);
         vec3 baseColor = uHeatmap ? ramp(heightT) : vec3(1.0);
         vec3 minorColor = uHeatmap ? baseColor : vec3(mix(0.15, 1.0, heightT));
+        if (uMaterial && uHasColorMap) {
+          // Hue from the true-colour mosaic, lightness from height (as on the grey ramp).
+          vec3 surfaceColor = texture(uColorMap, vGridUv).rgb;
+          float luma = dot(surfaceColor, vec3(0.2126, 0.7152, 0.0722));
+          vec3 tint = max(mix(vec3(1.0), surfaceColor / max(luma, 1e-3), 1.5), 0.0);
+          minorColor = min(tint * mix(0.15, 1.0, heightT), 1.0);
+          baseColor = minorColor;
+        }
         float lineHeight = vHeight - uContourShift;
         float minorLine = contour(lineHeight, uContourInterval, 0.6);
         float majorLine = contour(lineHeight, uContourInterval * ${MAJOR_EVERY}.0, 1.2);
         outgoingLight = mix(uFillColor, minorColor, minorLine * 0.6);
         outgoingLight = mix(outgoingLight, baseColor, majorLine);
-        #include <opaque_fragment>`,
+        #include <opaque_fragment>`
       );
   };
 
   material.setHeatmap = (enabled) => {
     uniforms.uHeatmap.value = enabled;
+  };
+
+  material.setMaterial = (enabled) => {
+    uniforms.uMaterial.value = enabled;
+  };
+
+  material.setColorMap = (colorMap) => {
+    uniforms.uColorMap.value = colorMap;
+    uniforms.uHasColorMap.value = true;
   };
 
   material.setNextHeightMap = (next) => {
