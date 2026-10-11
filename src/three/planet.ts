@@ -35,8 +35,9 @@ export interface PlanetBody {
 const UPGRADE_MIN_MBPS = 25;
 const THROUGHPUT_KEY = 'planet:mbps';
 
-const MESH_COLS = 1024;
-const MESH_ROWS = 512;
+const MESH = { cols: 1024, rows: 512 };
+// a quarter of the triangles for phones; the contours come from the height texture, so only the silhouette coarsens
+const MOBILE_MESH = { cols: 512, rows: 256 };
 
 const CAMERA_HOME = new THREE.Vector3(0, 1.05, 1.4);
 const CAMERA_TARGET = new THREE.Vector3(0, 0.95, 0);
@@ -115,7 +116,12 @@ function unpackHeights(bytes: Uint8Array, meta: HeightMeta) {
   return heights;
 }
 
-function createPlanetGeometry(heights: Int16Array, meta: HeightMeta, exaggeration: number) {
+function createPlanetGeometry(
+  heights: Int16Array,
+  meta: HeightMeta,
+  exaggeration: number,
+  { cols, rows }: typeof MESH
+) {
   const heightsKm = new Float32Array(meta.cols * (meta.rows + 1));
   for (let r = 0; r <= meta.rows; r++) {
     for (let c = 0; c < meta.cols; c++) {
@@ -125,8 +131,6 @@ function createPlanetGeometry(heights: Int16Array, meta: HeightMeta, exaggeratio
   const heightTexture = new THREE.DataTexture(heightsKm, meta.cols, meta.rows + 1, THREE.RedFormat, THREE.FloatType);
   heightTexture.needsUpdate = true;
 
-  const cols = MESH_COLS;
-  const rows = MESH_ROWS;
   const count = (cols + 1) * (rows + 1);
   const position = new Float32Array(count * 3);
   const gridUv = new Float32Array(count * 2);
@@ -176,7 +180,9 @@ export function createPlanet(
   const qualityOverride = new URLSearchParams(location.search).get(body.name);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // reduce the pixel density if on mobile :(
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, coarsePointer ? 1.5 : 2));
   const gl = renderer.getContext();
 
   const scene = new THREE.Scene();
@@ -335,7 +341,7 @@ export function createPlanet(
   let upgrade: { t: number; geometry: THREE.BufferGeometry; heightTexture: THREE.DataTexture } | undefined;
 
   const showHeights = (heights: Int16Array, meta: HeightMeta) => {
-    const built = createPlanetGeometry(heights, meta, body.exaggeration);
+    const built = createPlanetGeometry(heights, meta, body.exaggeration, coarsePointer ? MOBILE_MESH : MESH);
     if (!mesh) {
       heightTexture = built.heightTexture;
       mesh = new THREE.Mesh(

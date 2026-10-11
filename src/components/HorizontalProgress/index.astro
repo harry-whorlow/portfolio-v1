@@ -36,4 +36,10 @@ const { colors } = Astro.props;
     transform-origin: left center;
     will-change: transform;
   }
+
+  @media (width < 48rem) {
+    .progress-bars {
+      bottom: 4rem;
+    }
+  }
 </style>
