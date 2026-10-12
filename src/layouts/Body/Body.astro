@@ -3,6 +3,7 @@ import { getImage } from 'astro:assets';
 
 // components
 import CustomCursor from '../../components/CustomCursor/CustomCursor.astro';
+import PostHog from '../../components/posthog.astro';
 
 // images
 import faviconSvgSrc from '../../images/favicon.svg';
@@ -59,6 +60,7 @@ const ogImageAlt = "I'm Harry, written above a contour-lined render of the moon.
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
+    <PostHog />
   </head>
 
   <body data-overlayscrollbars-initialize>
