@@ -15,18 +15,23 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
 
 <Body title="Projekt Neu | Harry">
   <div class="theme" data-theme="dark">
-    <section id="first-section" class="first-section relative h-svh w-full overflow-hidden md:h-screen">
-      <canvas id="moon-canvas" class="block h-full w-full" />
+    <section
+      id="first-section"
+      aria-labelledby="hero-title"
+      class="first-section relative h-svh w-full overflow-hidden md:h-screen">
+      <canvas id="moon-canvas" class="block h-full w-full" aria-hidden="true"></canvas>
 
       <div class="pointer-events-none absolute top-0 left-0 p-5 md:p-12">
-        <h1 class="text-[17vw] leading-none font-bold md:text-[10rem]">I'm Harry,</h1>
+        <h1 id="hero-title" class="text-[17vw] leading-none font-bold md:text-[10rem]">
+          I'm Harry,
+        </h1>
         <p class="mt-4 text-sm md:text-base">I build tools, teams, and occasionally climb stuff.</p>
       </div>
 
       <HorizontalProgress colors={progressColors} />
     </section>
 
-    <section id="second-section" class="flex min-h-screen flex-col">
+    <section id="second-section" aria-labelledby="open-source-title" class="flex min-h-screen flex-col">
       <TextScroller />
 
       <div class="p-5 md:p-10">
@@ -38,15 +43,19 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
         </p>
 
         <p class="mt-4 w-full text-sm md:w-200 md:text-base">
-          Most of that time has been spent with TanStack. On 07/03/25, after a few months of implementing features,
-          fixing bugs and documenting APIs,{' '}
-          <a href="https://www.linkedin.com/in/corbincrutchley/" target="_blank" class="text-high underline">
+          Most of that time has been spent with TanStack. On <time datetime="2025-03-07">07/03/25</time>, after a few
+          months of implementing features, fixing bugs and documenting APIs,{' '}
+          <a
+            href="https://www.linkedin.com/in/corbincrutchley/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-high underline">
             Corbin Crutchley
           </a>{' '}
           messaged me to check my email. There, with an almost holy glow, was the subject line:{' '}
-          <span class="os-highlight px-1 text-black" style={`--highlight-color: ${RAMP[2]}`}>
+          <mark class="os-highlight px-1 text-black" style={`--highlight-color: ${RAMP[2]}`}>
             @crutchcorn has invited you to join the @TanStack organization
-          </span>
+          </mark>
           . Since then, it's given me opportunities I'm fortunate to have and friendships I'll be forever thankful for.
         </p>
 
@@ -59,13 +68,17 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       </div>
     </section>
 
-    <section id="third-section" class="flex flex-col">
+    <section id="third-section" aria-labelledby="experience-title" class="flex flex-col">
       <ExperienceTimeline colors={[RAMP[2], RAMP[4], RAMP[6]]}>
-        <Job company="AllMyHomes" dates="01/05/22 - 17/07/22">
+        <Job company="AllMyHomes" dates={['2022-05-01', '2022-07-17']}>
           <p>
             I think about AllMyHomes more than you'd expect for a three-month role. I was fresh out of a bootcamp and
             asked to migrate the micro-frontends I was responsible for into a monolith repository. When my senior,{' '}
-            <a href="https://www.linkedin.com/in/lukasz-milik/" target="_blank" class="text-high underline">
+            <a
+              href="https://www.linkedin.com/in/lukasz-milik/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-high underline">
               Łukasz
             </a>
             , said to "just copy over the APIs," I did, I copied thirteen thousand lines verbatim. When he said he'd
@@ -81,7 +94,7 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
           </p>
         </Job>
 
-        <Job company="Technoly" dates="01/09/22 - PRESENT">
+        <Job company="Technoly" dates={['2022-09-01', 'PRESENT']}>
           <p>
             Technoly is where I really progressed as a developer. I was given the freedom to make mistakes and had very
             little oversight for the majority of my time here. Decisions I made years ago as a junior developer
@@ -97,18 +110,23 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
           </p>
         </Job>
 
-        <Job company="TO BE CONTINUED..." dates="PRESENT - FUTURE">
+        <Job company="TO BE CONTINUED..." dates={['PRESENT', 'FUTURE']}>
           <p>My story is still developing, lets see where I go next.</p>
         </Job>
       </ExperienceTimeline>
     </section>
 
-    <section id="forth-section" class="relative flex h-screen flex-col overflow-hidden">
-      <canvas id="mars-canvas" class="absolute inset-0 block h-full w-full" />
+    <section
+      id="fourth-section"
+      aria-labelledby="contact-title"
+      class="relative flex h-screen flex-col overflow-hidden">
+      <canvas id="mars-canvas" class="absolute inset-0 block h-full w-full" aria-hidden="true"></canvas>
 
       <div class="pointer-events-none relative p-5 md:p-10">
-        <h1 class="mt-10 text-[9vw] leading-none font-bold md:text-[5rem]">So Lets work,</h1>
-        <h1 class="text-[15vw] leading-none font-bold md:text-[10rem]">TOGETHER</h1>
+        <h2 id="contact-title" class="mt-10 leading-none font-bold">
+          <span class="block text-[9vw] md:text-[5rem]">So Lets Work,</span>
+          <span class="block text-[15vw] md:text-[10rem]">TOGETHER</span>
+        </h2>
       </div>
     </section>
   </div>
@@ -137,13 +155,14 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     .os-highlight {
       background-image: linear-gradient(var(--highlight-color), var(--highlight-color));
       background-repeat: no-repeat;
+      background-color: transparent;
       background-size: 0% 100%;
       box-decoration-break: slice;
       -webkit-box-decoration-break: slice;
     }
     #third-section {
     }
-    #forth-section {
+    #fourth-section {
       opacity: 0;
     }
   </style>
@@ -207,7 +226,7 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       intro.to('.progress-bar', { scaleX: 1, duration: 0.8, stagger: 0.1 }, 0);
 
       // once the experience lines reach the left edge, go back to dark and bring in the next section
-      const fourth = document.querySelector<HTMLElement>('#forth-section')!;
+      const fourth = document.querySelector<HTMLElement>('#fourth-section')!;
       document.addEventListener('experience:drawn', () => {
         setTheme('dark');
         gsap.to(fourth, { opacity: 1, duration: 0.6, overwrite: true });

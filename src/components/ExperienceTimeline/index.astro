@@ -9,7 +9,7 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
 ---
 
 <div class="experience relative p-5 md:p-10">
-  <h1 class="mt-10 text-[15vw] leading-none font-bold md:text-[10rem]">
+  <h2 id="experience-title" class="mt-10 text-[15vw] leading-none font-bold md:text-[10rem]">
     Work
     <br />
     {letters.map(({ char, color }) => (
@@ -18,7 +18,7 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
       </span>
     ))}
     erience<span class="exp-baseline" aria-hidden="true"></span>
-  </h1>
+  </h2>
 
   <svg class="exp-lines" aria-hidden="true">
     {letters.map(({ color }) => (

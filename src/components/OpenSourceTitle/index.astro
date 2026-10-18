@@ -10,7 +10,7 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
 );
 ---
 
-<h1 class="os-title mt-10 text-[12vw] leading-none font-bold md:text-[10rem]" aria-label="Open Source" style={`--fill-color: ${color}`}>
+<h2 id="open-source-title" class="os-title mt-10 text-[12vw] leading-none font-bold md:text-[10rem]" aria-label="Open Source" style={`--fill-color: ${color}`}>
   <span class="os-line" aria-hidden="true"></span>
   {letters.map(({ char, wordStart }) => (
     <span class:list={['os-letter', { 'os-word-start': wordStart }]} data-char={char} aria-hidden="true">
@@ -22,7 +22,7 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
   <svg class="os-stream-svg" aria-hidden="true">
     <path class="os-stream" />
   </svg>
-</h1>
+</h2>
 
 <style>
   .os-title {

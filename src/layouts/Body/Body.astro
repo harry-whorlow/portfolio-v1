@@ -64,9 +64,10 @@ const ogImageAlt = "I'm Harry, written above a contour-lined render of the moon.
   </head>
 
   <body data-overlayscrollbars-initialize>
+    <CustomCursor />
+    <div id="noise-overlay" aria-hidden="true" style={`background-image: url('${noiseGif.src}')`}></div>
+
     <main class="min-h-screen">
-      <CustomCursor />
-      <div id="noise-overlay" style={`background-image: url('${noiseGif.src}')`}></div>
 
       <div id="smooth-wrapper">
         <div id="smooth-content">
