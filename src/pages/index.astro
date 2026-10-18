@@ -151,7 +151,13 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     #second-section {
     }
 
-    /* swept left to right by background-size; slice makes the sweep run line by line when the span wraps */
+    #third-section {
+    }
+
+    #fourth-section {
+      opacity: 0;
+    }
+
     .os-highlight {
       background-image: linear-gradient(var(--highlight-color), var(--highlight-color));
       background-repeat: no-repeat;
@@ -159,11 +165,6 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       background-size: 0% 100%;
       box-decoration-break: slice;
       -webkit-box-decoration-break: slice;
-    }
-    #third-section {
-    }
-    #fourth-section {
-      opacity: 0;
     }
   </style>
 
@@ -209,19 +210,6 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
         },
       });
 
-      // move the hero copy up off-screen in step with the pinned moon animation
-      intro.to(
-        '.hero-copy',
-        {
-          y: () => {
-            const copy = document.querySelector<HTMLElement>('.hero-copy');
-            return copy ? -(copy.offsetTop + copy.offsetHeight) : 0;
-          },
-          duration: 1,
-        },
-        0
-      );
-
       // staggered so the bars arrive one after another, together spanning the whole pin
       intro.to('.progress-bar', { scaleX: 1, duration: 0.8, stagger: 0.1 }, 0);
 
@@ -244,16 +232,6 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
           trigger: '.os-highlight',
           start: 'top 75%',
           end: 'top 45%',
-          scrub: true,
-        },
-      });
-
-      gsap.to('#overlay-secondary', {
-        opacity: 1,
-        scrollTrigger: {
-          trigger: '.second-section',
-          start: 'top bottom',
-          end: 'top center',
           scrub: true,
         },
       });
