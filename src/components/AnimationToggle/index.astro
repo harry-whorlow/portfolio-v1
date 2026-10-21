@@ -1,0 +1,82 @@
+---
+interface Props {}
+---
+
+<!-- Pauses every ambient animation on the page. Lives outside the smooth scroller, whose transform breaks position: fixed. -->
+<button type="button" class="animation-toggle" data-animation-toggle data-paused="false" aria-label="Pause background animations">
+  <svg class="animation-icon-pause" viewBox="0 0 16 16" aria-hidden="true">
+    <path d="M5 3v10M11 3v10"></path>
+  </svg>
+  <svg class="animation-icon-play" viewBox="0 0 16 16" aria-hidden="true">
+    <path d="M5 3l8 5-8 5z"></path>
+  </svg>
+</button>
+
+<style is:global>
+  .animation-toggle {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 60;
+
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    /* white under difference, like the cursor, so it reads on the dark and light themes alike */
+    color: #fff;
+    mix-blend-mode: difference;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+
+  .animation-toggle:hover,
+  .animation-toggle:focus-visible {
+    opacity: 1;
+  }
+
+  .animation-toggle:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .animation-toggle svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .animation-icon-play path {
+    fill: currentColor;
+  }
+
+  .animation-toggle[data-paused='true'] .animation-icon-pause,
+  .animation-toggle[data-paused='false'] .animation-icon-play {
+    display: none;
+  }
+
+  @media (width < 48rem) {
+    .animation-toggle {
+      right: 1rem;
+      bottom: 1rem;
+    }
+  }
+</style>
+
+<script>
+  import { onAnimationsPaused, toggleAnimations } from '../../utils/animations';
+
+  document.querySelectorAll<HTMLButtonElement>('[data-animation-toggle]').forEach((toggle) => {
+    toggle.addEventListener('click', toggleAnimations);
+    onAnimationsPaused((paused) => {
+      toggle.dataset.paused = String(paused);
+      toggle.setAttribute('aria-label', `${paused ? 'Play' : 'Pause'} background animations`);
+    });
+  });
+</script>

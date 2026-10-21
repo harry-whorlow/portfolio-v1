@@ -64,7 +64,7 @@ interface Props {}
     passedDuration = true;
   }, 1000);
 
-  const fadeInTimeline = gsap.timeline({ paused: true }).to('.mouse-fade-animation', { opacity: 1, duration: 4 });
+  const fadeInTimeline = gsap.timeline({ paused: true }).to('.mouse-fade-animation', { opacity: 1, duration: 1 });
 
   const CHASE_SPRING = { stiffness: 90, damping: 7 };
   const MAGNET_SPRING = { stiffness: 160, damping: 12 };
@@ -199,6 +199,7 @@ interface Props {}
         pageIsActive = true;
         if (pageIsActive && passedDuration && !hasBeenCalled) {
           fadeInTimeline.play();
+          document.documentElement.classList.add('custom-cursor');
           hasBeenCalled = true;
         }
 

@@ -91,7 +91,11 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
   import gsap from 'gsap';
   import ScrollTrigger from 'gsap/ScrollTrigger';
 
+  import { prefersReducedMotion } from '../../utils/motion';
+
   gsap.registerPlugin(ScrollTrigger);
+
+  const reduceMotion = prefersReducedMotion();
 
   // how far (px) the line drops out of the e before heading right; on phones the copy sits right under the e,
   // so the line runs through the gap above it instead
@@ -148,6 +152,9 @@ const letters = [...'Open Source'].flatMap((char, i, all) =>
 
     // one tip runs the whole way at a steady pace: in along the line, across the letters, then out of the e
     const render = (progress: number) => {
+      // reduced motion skips the sweep and shows the finished title
+      if (reduceMotion) progress = 1;
+
       const [lineIn, across, out] = legs;
       const d = progress * (lineIn + across + out);
 

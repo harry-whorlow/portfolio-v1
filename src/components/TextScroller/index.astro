@@ -36,9 +36,11 @@
 
 <style>
   #text-scroller {
+    position: relative;
     margin-top: 7rem;
     overflow-x: clip;
   }
+
   .big-text {
     font-size: 8rem;
     line-height: 8rem;
@@ -91,6 +93,7 @@
   gsap.registerPlugin(ScrollTrigger);
 
   import { horizontalLoop } from '../../utils/horizontal-loop.helper';
+  import { animationsPaused, onAnimationsPaused } from '../../utils/animations';
 
   type Rail = {
     el: HTMLElement;
@@ -135,10 +138,12 @@
     rail.tl = horizontalLoop(Array.from(rail.el.children), rail.config);
 
     rail.tl.timeScale(rail.timeScale ?? rail.scrollDownTimeScale);
-    if (!visible) reset(rail);
+    if (!visible || paused) reset(rail);
   };
 
   let visible = false;
+  // follows the page-wide animation toggle, which starts paused for reduced motion
+  let paused = animationsPaused();
 
   document.fonts.ready.then(() => {
     const rails: Rail[] = [
@@ -158,6 +163,14 @@
 
     rails.forEach(buildRail);
 
+    onAnimationsPaused((value) => {
+      paused = value;
+      rails.forEach((rail) => {
+        if (paused) rail.tl!.pause();
+        else if (visible) rail.tl!.resume();
+      });
+    });
+
     // the loop re-measures itself on resize, but only a rebuild can pick up newly added clones
     window.addEventListener('resize', () => {
       rails.filter(needsFill).forEach(buildRail);
@@ -167,8 +180,8 @@
     new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       rails.forEach((rail) => {
-        if (visible) rail.tl!.resume();
-        else reset(rail);
+        if (!visible) reset(rail);
+        else if (!paused) rail.tl!.resume();
       });
     }).observe(document.querySelector('#text-scroller')!);
 

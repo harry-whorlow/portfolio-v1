@@ -56,6 +56,9 @@ export interface PlanetOptions {
   backdrop?: (home: THREE.Camera) => THREE.Object3D;
   distanceKm?: number;
   scene?: SceneState;
+  autoSpin?: boolean;
+  /** Freezes the auto spin and the contour flow; dragging still turns the planet. */
+  paused?: boolean;
 }
 
 export interface Planet {
@@ -63,6 +66,7 @@ export interface Planet {
   setMaterial(enabled: boolean): void;
   setDistance(km: number): void;
   setScroll(progress: number): void;
+  setPaused(paused: boolean): void;
   /** Resolves once the first heightmap is on screen. */
   ready: Promise<void>;
   dispose(): void;
@@ -177,7 +181,15 @@ function createPlanetGeometry(
 export function createPlanet(
   canvas: HTMLCanvasElement,
   body: PlanetBody,
-  { heatmap = true, material = false, distanceKm = 1300, scene: start, backdrop: createBackdrop }: PlanetOptions = {}
+  {
+    heatmap = true,
+    material = false,
+    distanceKm = 1300,
+    scene: start,
+    backdrop: createBackdrop,
+    autoSpin = true,
+    paused = false,
+  }: PlanetOptions = {}
 ): Planet {
   const { meta: fullMeta, url: fullUrl } = body.full;
   const { meta: liteMeta, url: liteUrl } = body.lite;
@@ -299,9 +311,12 @@ export function createPlanet(
   const right = new THREE.Vector3();
   const up = new THREE.Vector3();
   const timer = new THREE.Timer();
+  // only advances while playing, so the contours pick up where they stopped
+  let flowSeconds = 0;
   const frame = (time: number) => {
     timer.update(time);
     const dt = Math.min(timer.getDelta(), 0.1);
+    if (!paused) flowSeconds += dt;
     const ease = 1 - Math.exp(-RETURN_RATE * dt);
     camera.position.lerp(homePosition, ease);
     camera.quaternion.slerp(homeQuaternion, ease);
@@ -317,12 +332,12 @@ export function createPlanet(
     } else {
       spin.multiplyScalar(Math.exp(-SPIN_DAMPING * dt));
       planet.rotateOnWorldAxis(up, spin.x * dt);
-      planet.rotateOnWorldAxis(right, (spin.y + AUTO_SPIN) * dt);
+      planet.rotateOnWorldAxis(right, (spin.y + (autoSpin && !paused ? AUTO_SPIN : 0)) * dt);
     }
     pendingX = 0;
     pendingY = 0;
 
-    mesh?.material.setTime(time / 1000);
+    mesh?.material.setTime(flowSeconds);
 
     if (upgrade) {
       upgrade.t = Math.min(upgrade.t + dt / UPGRADE_FADE_SECONDS, 1);
@@ -440,6 +455,9 @@ export function createPlanet(
     ready,
     setScroll(progress) {
       scrollProgress = THREE.MathUtils.clamp(progress, 0, 1);
+    },
+    setPaused(value) {
+      paused = value;
     },
     dispose() {
       disposed = true;
