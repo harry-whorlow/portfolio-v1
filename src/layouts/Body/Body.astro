@@ -68,7 +68,6 @@ const ogImageAlt = "I'm Harry, written above a contour-lined render of the moon.
     <div id="noise-overlay" aria-hidden="true" style={`background-image: url('${noiseGif.src}')`}></div>
 
     <main class="min-h-screen">
-
       <div id="smooth-wrapper">
         <div id="smooth-content">
           <slot />
@@ -86,6 +85,8 @@ const ogImageAlt = "I'm Harry, written above a contour-lined render of the moon.
   import 'overlayscrollbars/overlayscrollbars.css';
   import { OverlayScrollbars } from 'overlayscrollbars';
 
+  import { prefersReducedMotion } from '../../utils/motion';
+
   OverlayScrollbars(document.body, {
     scrollbars: {
       theme: 'os-theme-difference',
@@ -93,15 +94,19 @@ const ogImageAlt = "I'm Harry, written above a contour-lined render of the moon.
   });
 
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
-  ScrollTrigger.normalizeScroll(true);
 
-  ScrollSmoother.create({
-    wrapper: '#smooth-wrapper',
-    content: '#smooth-content',
-    smooth: 2,
-    smoothTouch: 0.1,
-    effects: true,
-  });
+  // smoothing keeps the page drifting after the user stops scrolling, so reduced motion gets native scroll
+  if (!prefersReducedMotion()) {
+    ScrollTrigger.normalizeScroll(true);
+
+    ScrollSmoother.create({
+      wrapper: '#smooth-wrapper',
+      content: '#smooth-content',
+      smooth: 2,
+      smoothTouch: 0.1,
+      effects: true,
+    });
+  }
 </script>
 
 <style is:global>
@@ -119,7 +124,11 @@ const ogImageAlt = "I'm Harry, written above a contour-lined render of the moon.
 
   * {
     box-sizing: border-box;
+  }
 
+  /* the system cursor only hides once the custom one is showing, so there is always a cursor on screen */
+  .custom-cursor,
+  .custom-cursor * {
     cursor: none;
   }
 
@@ -140,6 +149,13 @@ const ogImageAlt = "I'm Harry, written above a contour-lined render of the moon.
 
     z-index: 40;
     pointer-events: none;
+  }
+
+  /* the noise gif flickers and can't be paused */
+  @media (prefers-reduced-motion: reduce) {
+    #noise-overlay {
+      display: none;
+    }
   }
 
   .actionable {

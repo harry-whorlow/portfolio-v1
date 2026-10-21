@@ -95,7 +95,11 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
   import gsap from 'gsap';
   import ScrollTrigger from 'gsap/ScrollTrigger';
 
+  import { prefersReducedMotion } from '../../utils/motion';
+
   gsap.registerPlugin(ScrollTrigger);
+
+  const reduceMotion = prefersReducedMotion();
 
   const GAP = 6;
   const TURN = 14;
@@ -181,6 +185,9 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
     // d is how far (px) we've scrolled into the sequence. blue is drawn at scroll speed, so its tip sits on
     // REVEAL_AT; yellow and red start later and run faster until all three tips meet at the first job
     const render = (d: number) => {
+      // reduced motion skips the drawing and shows the finished letters and lines
+      if (reduceMotion) d = end;
+
       letters.forEach((letter, i) => letter.style.setProperty('--fill', `${clamp01((d - i * STAGGER) / FILL) * 100}%`));
 
       lines.forEach((line, i) => {
@@ -208,12 +215,19 @@ const letters = ['E', 'x', 'p'].map((char, i) => ({ char, color: colors[i] }));
       onRefresh: (self) => render(self.progress * (self.end - self.start)),
     });
 
+    // with reduced motion the jobs are never hidden (see Job.astro), so there's nothing to reveal
+    if (reduceMotion) return;
+
     jobs.forEach((job) => {
+      // opacity rather than autoAlpha: visibility: hidden would drop the job from the accessibility tree
       const reveal = gsap.fromTo(
         job,
-        { autoAlpha: 0, x: -24 },
-        { autoAlpha: 1, x: 0, duration: 0.6, ease: 'power2.out', paused: true }
+        { opacity: 0, x: -24 },
+        { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out', paused: true }
       );
+
+      // tabbing to a link in a job that hasn't scrolled into view yet shows it straight away
+      job.addEventListener('focusin', () => reveal.play());
 
       ScrollTrigger.create({ trigger: job, start: `top ${REVEAL_AT}`, onEnter: () => reveal.play() });
 

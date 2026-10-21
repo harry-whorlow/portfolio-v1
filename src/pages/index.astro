@@ -49,8 +49,8 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
             href="https://www.linkedin.com/in/corbincrutchley/"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-high underline">
-            Corbin Crutchley
+            class="theme-link underline">
+            Corbin Crutchley<span class="sr-only"> (opens in a new tab)</span>
           </a>{' '}
           messaged me to check my email. There, with an almost holy glow, was the subject line:{' '}
           <mark class="os-highlight px-1 text-black" style={`--highlight-color: ${RAMP[2]}`}>
@@ -78,8 +78,8 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
               href="https://www.linkedin.com/in/lukasz-milik/"
               target="_blank"
               rel="noopener noreferrer"
-              class="text-high underline">
-              Łukasz
+              class="theme-link underline">
+              Łukasz<span class="sr-only"> (opens in a new tab)</span>
             </a>
             , said to "just copy over the APIs," I did, I copied thirteen thousand lines verbatim. When he said he'd
             speak to my skip-level manager after taking one look at the PR, I was certain I was finished. What happened
@@ -125,7 +125,7 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       <div class="pointer-events-none relative p-5 md:p-10">
         <h2 id="contact-title" class="mt-10 leading-none font-bold">
           <span class="block text-[9vw] md:text-[5rem]">So Lets Work,</span>
-          <span class="block text-[15vw] md:text-[10rem]">TOGETHER</span>
+          <span class="block text-[15vw] uppercase md:text-[10rem]">Together</span>
         </h2>
       </div>
     </section>
@@ -135,6 +135,8 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     .theme {
       --theme-bg: #000;
       --theme-fg: var(--main-text-light);
+      /* the high elevation red (RAMP[6]) is only 3.8:1 on black, so links get a lighter shade in the dark theme */
+      --theme-link: #ce4d3a;
 
       background-color: var(--theme-bg);
       color: var(--theme-fg);
@@ -146,6 +148,13 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     .theme[data-theme='light'] {
       --theme-bg: var(--grey-light-main);
       --theme-fg: var(--main-text-dark);
+      /* 4.58:1 on --grey-light-main; a darker background needs a darker red (#72271c passes on #afafac) */
+      --theme-link: #b8402e;
+    }
+
+    .theme-link {
+      color: var(--theme-link);
+      transition: color 0.6s ease;
     }
 
     #second-section {
@@ -154,8 +163,11 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     #third-section {
     }
 
-    #fourth-section {
-      opacity: 0;
+    /* only hidden when a script is there to fade it back in */
+    @media (scripting: enabled) {
+      #fourth-section {
+        opacity: 0;
+      }
     }
 
     .os-highlight {
@@ -173,12 +185,15 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
     import ScrollTrigger from 'gsap/ScrollTrigger';
 
     import { createMoon } from '../three/moon';
+    import { prefersReducedMotion } from '../utils/motion';
 
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener('DOMContentLoaded', () => {
+      const reduceMotion = prefersReducedMotion();
+
       const canvas = document.querySelector<HTMLCanvasElement>('#moon-canvas');
-      const moon = canvas && createMoon(canvas);
+      const moon = canvas && createMoon(canvas, { autoSpin: !reduceMotion });
 
       // Mars sits at the bottom of the page, so its code and heightmaps wait until the moon is up and the
       // browser is idle, keeping them off the critical path.
@@ -187,7 +202,7 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
         'requestIdleCallback' in window ? requestIdleCallback(callback, { timeout: 4000 }) : setTimeout(callback, 1000);
       if (marsCanvas) {
         Promise.resolve(moon?.ready).then(() =>
-          whenIdle(() => import('../three/mars').then(({ createMars }) => createMars(marsCanvas)))
+          whenIdle(() => import('../three/mars').then(({ createMars }) => createMars(marsCanvas, { autoSpin: !reduceMotion })))
         );
       }
       const theme = document.querySelector<HTMLElement>('.theme')!;
@@ -225,7 +240,8 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       });
 
       // the invite highlight fills on its own as it scrolls up through the screen
-      gsap.to('.os-highlight', {
+      if (reduceMotion) gsap.set('.os-highlight', { backgroundSize: '100% 100%' });
+      else gsap.to('.os-highlight', {
         backgroundSize: '100% 100%',
         ease: 'none',
         scrollTrigger: {

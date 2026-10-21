@@ -33,8 +33,12 @@ const parts = dates.map((value) => {
 </li>
 
 <style>
-  .exp-job {
-    visibility: hidden;
+  /* hidden with opacity, not visibility, so screen readers still reach jobs that haven't been revealed yet;
+     without a script or with reduced motion there is no reveal, so they stay visible */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .exp-job {
+      opacity: 0;
+    }
   }
 
   .exp-description :global(> * + *) {

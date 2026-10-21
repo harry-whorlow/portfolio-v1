@@ -56,6 +56,7 @@ export interface PlanetOptions {
   backdrop?: (home: THREE.Camera) => THREE.Object3D;
   distanceKm?: number;
   scene?: SceneState;
+  autoSpin?: boolean;
 }
 
 export interface Planet {
@@ -177,7 +178,14 @@ function createPlanetGeometry(
 export function createPlanet(
   canvas: HTMLCanvasElement,
   body: PlanetBody,
-  { heatmap = true, material = false, distanceKm = 1300, scene: start, backdrop: createBackdrop }: PlanetOptions = {}
+  {
+    heatmap = true,
+    material = false,
+    distanceKm = 1300,
+    scene: start,
+    backdrop: createBackdrop,
+    autoSpin = true,
+  }: PlanetOptions = {}
 ): Planet {
   const { meta: fullMeta, url: fullUrl } = body.full;
   const { meta: liteMeta, url: liteUrl } = body.lite;
@@ -317,7 +325,7 @@ export function createPlanet(
     } else {
       spin.multiplyScalar(Math.exp(-SPIN_DAMPING * dt));
       planet.rotateOnWorldAxis(up, spin.x * dt);
-      planet.rotateOnWorldAxis(right, (spin.y + AUTO_SPIN) * dt);
+      planet.rotateOnWorldAxis(right, (spin.y + (autoSpin ? AUTO_SPIN : 0)) * dt);
     }
     pendingX = 0;
     pendingY = 0;

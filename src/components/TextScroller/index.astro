@@ -7,6 +7,10 @@
     <li>Neon</li>
   </ul>
 
+  <button type="button" class="marquee-toggle" id="marquee-toggle" aria-controls="text-scroller">
+    Pause animation
+  </button>
+
   <div class="rail" id="big" aria-hidden="true">
     <span class="big-text">PART TIME DEVELOPER</span>
     <span class="big-text text-high">&</span>
@@ -36,8 +40,28 @@
 
 <style>
   #text-scroller {
+    position: relative;
     margin-top: 7rem;
     overflow-x: clip;
+  }
+
+  /* sits in the gap above the rails; WCAG 2.2.2 needs a way to stop anything that moves for over 5 seconds */
+  .marquee-toggle {
+    position: absolute;
+    top: -2.75rem;
+    right: 2.5rem;
+
+    min-height: 1.5rem;
+    padding: 0.25rem 0.5rem;
+
+    font-family: 'Ingram Mono', monospace;
+    font-size: 0.875rem;
+    text-decoration: underline;
+  }
+
+  .marquee-toggle:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
   .big-text {
     font-size: 8rem;
@@ -82,6 +106,10 @@
     span {
       margin-right: 1.25rem;
     }
+
+    .marquee-toggle {
+      right: 1.25rem;
+    }
   }
 </style>
 
@@ -91,6 +119,7 @@
   gsap.registerPlugin(ScrollTrigger);
 
   import { horizontalLoop } from '../../utils/horizontal-loop.helper';
+  import { prefersReducedMotion } from '../../utils/motion';
 
   type Rail = {
     el: HTMLElement;
@@ -135,10 +164,12 @@
     rail.tl = horizontalLoop(Array.from(rail.el.children), rail.config);
 
     rail.tl.timeScale(rail.timeScale ?? rail.scrollDownTimeScale);
-    if (!visible) reset(rail);
+    if (!visible || paused) reset(rail);
   };
 
   let visible = false;
+  // reduced motion starts the rails still; either way the toggle can start or stop them
+  let paused = prefersReducedMotion();
 
   document.fonts.ready.then(() => {
     const rails: Rail[] = [
@@ -158,6 +189,19 @@
 
     rails.forEach(buildRail);
 
+    const toggle = document.querySelector<HTMLButtonElement>('#marquee-toggle')!;
+    const renderToggle = () => (toggle.textContent = paused ? 'Play animation' : 'Pause animation');
+    renderToggle();
+
+    toggle.addEventListener('click', () => {
+      paused = !paused;
+      renderToggle();
+      rails.forEach((rail) => {
+        if (paused) rail.tl!.pause();
+        else if (visible) rail.tl!.resume();
+      });
+    });
+
     // the loop re-measures itself on resize, but only a rebuild can pick up newly added clones
     window.addEventListener('resize', () => {
       rails.filter(needsFill).forEach(buildRail);
@@ -167,8 +211,8 @@
     new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       rails.forEach((rail) => {
-        if (visible) rail.tl!.resume();
-        else reset(rail);
+        if (!visible) reset(rail);
+        else if (!paused) rail.tl!.resume();
       });
     }).observe(document.querySelector('#text-scroller')!);
 
