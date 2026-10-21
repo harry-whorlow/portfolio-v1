@@ -1,0 +1,168 @@
+---
+import { RAMP } from '../../three/palette';
+
+interface Props {
+  colors?: string[];
+  // total boids across all flocks; scales with the host's area when left out
+  count?: number;
+  paused?: boolean;
+  hidden?: boolean;
+}
+
+// low, mid and high elevation, matching the progress bars and the experience lines
+const { colors = [RAMP[2], RAMP[4], RAMP[6]], count, paused = false, hidden = false } = Astro.props;
+---
+
+<!--
+  Fills its nearest positioned ancestor. Siblings that should sit above the flock need to be positioned too.
+  Drive it from elsewhere with element.dispatchEvent(new Event('boids:pause')), likewise 'boids:play', 'boids:toggle',
+  'boids:hide' and 'boids:show'; the current state is reflected on data-paused and data-hidden.
+-->
+<div
+  class="boids"
+  data-boids
+  data-colors={JSON.stringify(colors)}
+  data-count={count}
+  data-paused={String(paused)}
+  data-hidden={String(hidden)}>
+  <div class="boids-viewport" aria-hidden="true">
+    <canvas class="boids-canvas"></canvas>
+  </div>
+
+  <div class="boids-viewport boids-controls">
+    <button type="button" class="boids-toggle" aria-label="Pause background animation">
+      <svg class="boids-icon-pause" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M5 3v10M11 3v10" />
+      </svg>
+      <svg class="boids-icon-play" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M5 3l8 5-8 5z" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .boids {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.6s ease,
+      visibility 0.6s;
+  }
+
+  /* visibility keeps the toggle out of the tab order once it has faded */
+  .boids[data-hidden='true'] {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* one viewport tall, moved by script over the part of the host on screen: ScrollSmoother's transform breaks fixed and sticky */
+  .boids-viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    will-change: transform;
+  }
+
+  .boids-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* the canvas sits under the content, the toggle over it */
+  .boids-controls {
+    z-index: 10;
+  }
+
+  .boids-toggle {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.25rem;
+
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    color: inherit;
+    opacity: 0.6;
+    pointer-events: auto;
+    transition: opacity 0.2s ease;
+  }
+
+  .boids-toggle:hover,
+  .boids-toggle:focus-visible {
+    opacity: 1;
+  }
+
+  .boids-toggle:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .boids-toggle svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .boids-icon-play path {
+    fill: currentColor;
+  }
+
+  .boids[data-paused='true'] .boids-icon-pause,
+  .boids[data-paused='false'] .boids-icon-play {
+    display: none;
+  }
+
+  @media (width < 48rem) {
+    .boids-toggle {
+      right: 1rem;
+      bottom: 1rem;
+    }
+  }
+</style>
+
+<script>
+  import { createBoids } from './boids';
+  import { prefersReducedMotion } from '../../utils/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-boids]').forEach((root) => {
+    const canvas = root.querySelector<HTMLCanvasElement>('.boids-canvas')!;
+    const toggle = root.querySelector<HTMLButtonElement>('.boids-toggle')!;
+
+    const boids = createBoids(canvas, {
+      host: root,
+      follow: Array.from(root.querySelectorAll<HTMLElement>('.boids-viewport')),
+      colors: JSON.parse(root.dataset.colors!),
+      count: root.dataset.count ? Number(root.dataset.count) : undefined,
+      // reduced motion gets a still flock, which the toggle can still start
+      paused: root.dataset.paused === 'true' || prefersReducedMotion(),
+      hidden: root.dataset.hidden === 'true',
+    });
+
+    const sync = () => {
+      root.dataset.paused = String(boids.paused);
+      root.dataset.hidden = String(boids.hidden);
+      toggle.setAttribute('aria-label', `${boids.paused ? 'Play' : 'Pause'} background animation`);
+    };
+    sync();
+
+    const on = (event: string, action: () => void) => root.addEventListener(event, () => (action(), sync()));
+    toggle.addEventListener('click', () => (boids.toggle(), sync()));
+    on('boids:play', boids.play);
+    on('boids:pause', boids.pause);
+    on('boids:toggle', boids.toggle);
+    on('boids:hide', boids.hide);
+    on('boids:show', boids.show);
+  });
+</script>

@@ -6,6 +6,7 @@ import HorizontalProgress from '../components/HorizontalProgress/index.astro';
 import ExperienceTimeline from '../components/ExperienceTimeline/index.astro';
 import Job from '../components/ExperienceTimeline/Job.astro';
 import OpenSourceTitle from '../components/OpenSourceTitle/index.astro';
+import Boids from '../components/Boids/index.astro';
 
 import { RAMP } from '../three/palette';
 
@@ -31,90 +32,96 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       <HorizontalProgress colors={progressColors} />
     </section>
 
-    <section id="second-section" aria-labelledby="open-source-title" class="flex min-h-screen flex-col">
-      <TextScroller />
+    <!-- one flock behind the open source and experience sections, which are positioned so they paint above it -->
+    <div class="relative">
+      <Boids hidden />
 
-      <div class="p-5 md:p-10">
-        <OpenSourceTitle color={RAMP[4]} />
+      <section id="second-section" aria-labelledby="open-source-title" class="relative flex min-h-screen flex-col">
+        <TextScroller />
 
-        <p class="mt-4 w-full text-sm md:w-200 md:text-base">
-          I've been contributing to open source for two years now, with commits across the ecosystem and encounters with
-          developers all over the globe.
-        </p>
+        <div class="p-5 md:p-10">
+          <OpenSourceTitle color={RAMP[4]} />
 
-        <p class="mt-4 w-full text-sm md:w-200 md:text-base">
-          Most of that time has been spent with TanStack. On <time datetime="2025-03-07">07/03/25</time>, after a few
-          months of implementing features, fixing bugs and documenting APIs,{' '}
-          <a
-            href="https://www.linkedin.com/in/corbincrutchley/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="theme-link underline">
-            Corbin Crutchley<span class="sr-only"> (opens in a new tab)</span>
-          </a>{' '}
-          messaged me to check my email. There, with an almost holy glow, was the subject line:{' '}
-          <mark class="os-highlight px-1 text-black" style={`--highlight-color: ${RAMP[2]}`}>
-            @crutchcorn has invited you to join the @TanStack organization
-          </mark>
-          . Since then, it's given me opportunities I'm fortunate to have and friendships I'll be forever thankful for.
-        </p>
+          <p class="mt-4 w-full text-sm md:w-200 md:text-base">
+            I've been contributing to open source for two years now, with commits across the ecosystem and encounters
+            with developers all over the globe.
+          </p>
 
-        <p class="mt-4 w-full text-sm md:w-200 md:text-base">
-          On its face, open source is a strange thing: people giving up their free time so faceless mega corporations™
-          can profit from their labour. But there's something to it, something about programming in the dead of night on
-          features a developer somewhere in the world will use. You'll probably never meet them, but for a moment,
-          you're building something together.
-        </p>
-      </div>
-    </section>
-
-    <section id="third-section" aria-labelledby="experience-title" class="flex flex-col">
-      <ExperienceTimeline colors={[RAMP[2], RAMP[4], RAMP[6]]}>
-        <Job company="AllMyHomes" dates={['2022-05-01', '2022-07-17']}>
-          <p>
-            I think about AllMyHomes more than you'd expect for a three-month role. I was fresh out of a bootcamp and
-            asked to migrate the micro-frontends I was responsible for into a monolith repository. When my senior,{' '}
+          <p class="mt-4 w-full text-sm md:w-200 md:text-base">
+            Most of that time has been spent with TanStack. On <time datetime="2025-03-07">07/03/25</time>, after a few
+            months of implementing features, fixing bugs and documenting APIs,{' '}
             <a
-              href="https://www.linkedin.com/in/lukasz-milik/"
+              href="https://www.linkedin.com/in/corbincrutchley/"
               target="_blank"
               rel="noopener noreferrer"
               class="theme-link underline">
-              Łukasz<span class="sr-only"> (opens in a new tab)</span>
-            </a>
-            , said to "just copy over the APIs," I did, I copied thirteen thousand lines verbatim. When he said he'd
-            speak to my skip-level manager after taking one look at the PR, I was certain I was finished. What happened
-            instead was training and a second chance. I'm not the greatest developer in the world, but I'm a competent
-            one now, and I owe much of that to Łukasz.
+              Corbin Crutchley<span class="sr-only"> (opens in a new tab)</span>
+            </a>{' '}
+            messaged me to check my email. There, with an almost holy glow, was the subject line:{' '}
+            <mark class="os-highlight px-1 text-black" style={`--highlight-color: ${RAMP[2]}`}>
+              @crutchcorn has invited you to join the @TanStack organization
+            </mark>
+            . Since then, it's given me opportunities I'm fortunate to have and friendships I'll be forever thankful
+            for.
           </p>
 
-          <p>
-            Unfortunately my time at AllMyHomes was cut short, as the summer of 22 drew to a close, and governments
-            around the world were increasing interest rates to fight inflation, the funding was cut. Three rounds of
-            layoffs later the company no longer exists.
+          <p class="mt-4 w-full text-sm md:w-200 md:text-base">
+            On its face, open source is a strange thing: people giving up their free time so faceless mega corporations™
+            can profit from their labour. But there's something to it, something about programming in the dead of night
+            on features a developer somewhere in the world will use. You'll probably never meet them, but for a moment,
+            you're building something together.
           </p>
-        </Job>
+        </div>
+      </section>
 
-        <Job company="Technoly" dates={['2022-09-01', 'PRESENT']}>
-          <p>
-            Technoly is where I really progressed as a developer. I was given the freedom to make mistakes and had very
-            little oversight for the majority of my time here. Decisions I made years ago as a junior developer
-            frequently show up again in tasks I have today. I feel that oftentimes we learn the most as developers when
-            we are confronted with decisions we made in the past, a lesson that many developers are robbed of if their
-            time at a company is on the shorter side.
-          </p>
+      <section id="third-section" aria-labelledby="experience-title" class="relative flex flex-col">
+        <ExperienceTimeline colors={[RAMP[2], RAMP[4], RAMP[6]]}>
+          <Job company="AllMyHomes" dates={['2022-05-01', '2022-07-17']}>
+            <p>
+              I think about AllMyHomes more than you'd expect for a three-month role. I was fresh out of a bootcamp and
+              asked to migrate the micro-frontends I was responsible for into a monolith repository. When my senior,{' '}
+              <a
+                href="https://www.linkedin.com/in/lukasz-milik/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="theme-link underline">
+                Łukasz<span class="sr-only"> (opens in a new tab)</span>
+              </a>
+              , said to "just copy over the APIs," I did, I copied thirteen thousand lines verbatim. When he said he'd
+              speak to my skip-level manager after taking one look at the PR, I was certain I was finished. What
+              happened instead was training and a second chance. I'm not the greatest developer in the world, but I'm a
+              competent one now, and I owe much of that to Łukasz.
+            </p>
 
-          <p>
-            I have learnt a lot here: I have become confident in my developer skills, deepened my understanding of
-            advanced TypeScript, and even became a maintainer of TanStack... an organisation I once revered as a junior
-            developer, and still do.
-          </p>
-        </Job>
+            <p>
+              Unfortunately my time at AllMyHomes was cut short, as the summer of 22 drew to a close, and governments
+              around the world were increasing interest rates to fight inflation, the funding was cut. Three rounds of
+              layoffs later the company no longer exists.
+            </p>
+          </Job>
 
-        <Job company="TO BE CONTINUED..." dates={['PRESENT', 'FUTURE']}>
-          <p>My story is still developing, lets see where I go next.</p>
-        </Job>
-      </ExperienceTimeline>
-    </section>
+          <Job company="Technoly" dates={['2022-09-01', 'PRESENT']}>
+            <p>
+              Technoly is where I really progressed as a developer. I was given the freedom to make mistakes and had
+              very little oversight for the majority of my time here. Decisions I made years ago as a junior developer
+              frequently show up again in tasks I have today. I feel that oftentimes we learn the most as developers
+              when we are confronted with decisions we made in the past, a lesson that many developers are robbed of if
+              their time at a company is on the shorter side.
+            </p>
+
+            <p>
+              I have learnt a lot here: I have become confident in my developer skills, deepened my understanding of
+              advanced TypeScript, and even became a maintainer of TanStack... an organisation I once revered as a
+              junior developer, and still do.
+            </p>
+          </Job>
+
+          <Job company="TO BE CONTINUED..." dates={['PRESENT', 'FUTURE']}>
+            <p>My story is still developing, lets see where I go next.</p>
+          </Job>
+        </ExperienceTimeline>
+      </section>
+    </div>
 
     <section
       id="fourth-section"
@@ -157,12 +164,6 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       transition: color 0.6s ease;
     }
 
-    #second-section {
-    }
-
-    #third-section {
-    }
-
     /* only hidden when a script is there to fade it back in */
     @media (scripting: enabled) {
       #fourth-section {
@@ -202,11 +203,18 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
         'requestIdleCallback' in window ? requestIdleCallback(callback, { timeout: 4000 }) : setTimeout(callback, 1000);
       if (marsCanvas) {
         Promise.resolve(moon?.ready).then(() =>
-          whenIdle(() => import('../three/mars').then(({ createMars }) => createMars(marsCanvas, { autoSpin: !reduceMotion })))
+          whenIdle(() =>
+            import('../three/mars').then(({ createMars }) => createMars(marsCanvas, { autoSpin: !reduceMotion }))
+          )
         );
       }
+      // the flock only flies on the light theme, and is paused and faded out whenever the page goes dark
+      const boids = document.querySelector<HTMLElement>('[data-boids]');
       const theme = document.querySelector<HTMLElement>('.theme')!;
-      const setTheme = (value: 'dark' | 'light') => (theme.dataset.theme = value);
+      const setTheme = (value: 'dark' | 'light') => {
+        theme.dataset.theme = value;
+        boids?.dispatchEvent(new Event(value === 'dark' ? 'boids:hide' : 'boids:show'));
+      };
 
       // one scrubbed timeline drives the pin, so the copy, the bars and the theme flip can't drift apart
       const intro = gsap.timeline({
@@ -241,16 +249,17 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
 
       // the invite highlight fills on its own as it scrolls up through the screen
       if (reduceMotion) gsap.set('.os-highlight', { backgroundSize: '100% 100%' });
-      else gsap.to('.os-highlight', {
-        backgroundSize: '100% 100%',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.os-highlight',
-          start: 'top 75%',
-          end: 'top 45%',
-          scrub: true,
-        },
-      });
+      else
+        gsap.to('.os-highlight', {
+          backgroundSize: '100% 100%',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.os-highlight',
+            start: 'top 75%',
+            end: 'top 45%',
+            scrub: true,
+          },
+        });
     });
   </script>
 </Body>
