@@ -1,0 +1,264 @@
+---
+import { RAMP } from '../../three/palette';
+import { getContributions } from '../../data/contributions';
+
+const colors = { openSource: RAMP[4], personal: RAMP[2] };
+
+const { weeks, totals } = await getContributions();
+const renderedAt = Date.now();
+
+const first = weeks[0]?.[0]?.date;
+const last = weeks.at(-1)?.at(-1)?.date;
+---
+
+<figure
+  class="contribution-graph mt-16"
+  data-contribution-graph
+  data-rendered-at={renderedAt}
+  data-weeks={JSON.stringify(weeks)}
+  data-colors={JSON.stringify(colors)}>
+  <div class="mb-4">
+    <p class="contribution-total text-[18vw] leading-none font-bold md:text-[8rem]" data-total="all">
+      {totals.openSource + totals.personal}
+    </p>
+    <p class="mt-2 text-sm md:text-base">
+      contributions in the last year: <span data-total="openSource">{totals.openSource}</span> open source,{' '}
+      <span data-total="personal">{totals.personal}</span> personal
+    </p>
+  </div>
+
+  <div class="contribution-stage">
+    <canvas class="contribution-canvas" aria-hidden="true"></canvas>
+    <div class="contribution-months" aria-hidden="true"></div>
+    <div class="contribution-tooltip" aria-hidden="true" hidden></div>
+  </div>
+
+  <figcaption class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm md:text-base">
+    <span class="flex items-center gap-2">
+      <span class="contribution-swatch" style={`background-color: ${colors.openSource}`}></span>
+      Open source
+    </span>
+    <span class="flex items-center gap-2">
+      <span class="contribution-swatch" style={`background-color: ${colors.personal}`}></span>
+      Personal
+    </span>
+    <span class="sr-only" data-summary>
+      Contributions per day from <time datetime={first}>{first}</time> to <time datetime={last}>{last}</time>:
+      {totals.openSource} to open source projects and {totals.personal} to personal projects.
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .contribution-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 41 / 10;
+  }
+
+  @media (width < 48rem) {
+    .contribution-stage {
+      aspect-ratio: 35 / 16;
+    }
+  }
+
+  .contribution-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .contribution-total {
+    font-family: 'Alliance Neue', sans-serif;
+  }
+
+  .contribution-months {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .contribution-months :global(span) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  @media (width < 48rem) {
+    .contribution-months :global(span:nth-child(even)) {
+      display: none;
+    }
+  }
+
+  .contribution-tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0.25rem 0.5rem;
+
+    background-color: #000;
+    color: var(--main-text-light);
+    font-size: 0.75rem;
+    white-space: nowrap;
+
+    transform: translate(-50%, calc(-100% - 12px));
+    pointer-events: none;
+  }
+
+  .contribution-swatch {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  import { createGraph } from './graph';
+  import type { ContributionDay } from '../../data/contributions';
+  import { animationsPaused, onAnimationsPaused } from '../../utils/animations';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  type Weeks = ContributionDay[][];
+
+  const format = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+  const ENDPOINT = '/api/contributions.json';
+  const SAVED_MS = 10 * 60_000;
+  const SAVED_KEY = 'contributions:v1';
+
+  const readSaved = (): { at: number; weeks: Weeks } | null => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(SAVED_KEY) ?? 'null');
+      return saved && typeof saved.at === 'number' && Array.isArray(saved.weeks) ? saved : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const writeSaved = (weeks: Weeks) => {
+    try {
+      localStorage.setItem(SAVED_KEY, JSON.stringify({ at: Date.now(), weeks }));
+    } catch {}
+  };
+
+  const saved = readSaved();
+  const live: Promise<Weeks | null> =
+    saved && Date.now() - saved.at <= SAVED_MS
+      ? Promise.resolve(null)
+      : fetch(ENDPOINT)
+          .then((response) => (response.ok ? response.json() : null))
+          .then((data: { weeks: Weeks } | null) => {
+            if (!data?.weeks?.length) return null;
+            writeSaved(data.weeks);
+            return data.weeks;
+          })
+          .catch(() => null);
+
+  const updateCaption = (root: HTMLElement, weeks: Weeks) => {
+    const days = weeks.flat();
+    const openSource = days.reduce((sum, day) => sum + day.openSource, 0);
+    const personal = days.reduce((sum, day) => sum + day.personal, 0);
+    const values: Record<string, number> = { openSource, personal, all: openSource + personal };
+    root.querySelectorAll<HTMLElement>('[data-total]').forEach((element) => {
+      element.textContent = String(values[element.dataset.total!]);
+    });
+    const first = days[0].date;
+    const last = days.at(-1)!.date;
+    root.querySelector('[data-summary]')!.innerHTML =
+      `Contributions per day from <time datetime="${first}">${first}</time> to <time datetime="${last}">${last}</time>: ` +
+      `${openSource} to open source projects and ${personal} to personal projects.`;
+  };
+
+  const themeColors = (element: Element) => {
+    const style = getComputedStyle(element);
+    return {
+      ink: style.getPropertyValue('--theme-fg').trim(),
+      paper: style.getPropertyValue('--theme-bg').trim(),
+    };
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-contribution-graph]').forEach((root) => {
+    const canvas = root.querySelector<HTMLCanvasElement>('.contribution-canvas')!;
+    const tooltip = root.querySelector<HTMLElement>('.contribution-tooltip')!;
+    const months = root.querySelector<HTMLElement>('.contribution-months')!;
+
+    const graph = createGraph(canvas, {
+      weeks: JSON.parse(root.dataset.weeks!),
+      colors: { ...JSON.parse(root.dataset.colors!), ...themeColors(root) },
+      onHover: (day, x, y) => {
+        tooltip.hidden = !day;
+        if (!day) return;
+        const date = format.format(new Date(day.date));
+        const total = day.openSource + day.personal;
+        tooltip.textContent = total
+          ? `${date} · ${plural(total, 'contribution')} · ${day.openSource} open source · ${day.personal} personal`
+          : `${date} · no contributions`;
+        const half = tooltip.offsetWidth / 2;
+        tooltip.style.left = `${Math.min(Math.max(x, half), canvas.clientWidth - half)}px`;
+        tooltip.style.top = `${y}px`;
+      },
+      onRender: (starts) => {
+        while (months.children.length < starts.length) months.append(document.createElement('span'));
+        while (months.children.length > starts.length) months.lastElementChild!.remove();
+        starts.forEach(({ label, x, y }, i) => {
+          const span = months.children[i] as HTMLElement;
+          span.textContent = label;
+          span.style.transform = `translate(${x}px, ${y}px) translate(-50%, 0)`;
+        });
+      },
+    });
+    onAnimationsPaused(graph.setPaused);
+
+    const theme = root.closest('.theme');
+    if (theme) {
+      let shown = themeColors(root);
+      new MutationObserver(() => {
+        const from = shown;
+        const to = themeColors(root);
+        const mix = { t: 0 };
+        gsap.to(mix, {
+          t: 1,
+          duration: animationsPaused() ? 0 : 0.6,
+          ease: 'power1.out',
+          overwrite: true,
+          onUpdate: () => {
+            shown = {
+              ink: gsap.utils.interpolate(from.ink, to.ink, mix.t),
+              paper: gsap.utils.interpolate(from.paper, to.paper, mix.t),
+            };
+            graph.setColors(shown);
+          },
+        });
+      }).observe(theme, { attributes: true, attributeFilter: ['data-theme'] });
+    }
+
+    ScrollTrigger.create({
+      trigger: canvas,
+      start: 'top 80%',
+      end: 'bottom 50%',
+      refreshPriority: -1,
+      onEnter: () => graph.setRising(true),
+      onLeave: () => graph.setRising(true),
+      onEnterBack: () => graph.setRising(false),
+      onLeaveBack: () => graph.setRising(false),
+    });
+
+    const show = (weeks: Weeks) => {
+      const json = JSON.stringify(weeks);
+      if (!weeks.length || json === root.dataset.weeks) return;
+      root.dataset.weeks = json;
+      graph.setData(weeks);
+      updateCaption(root, weeks);
+    };
+
+    if (saved && saved.at > Number(root.dataset.renderedAt)) show(saved.weeks);
+    live.then((weeks) => weeks && show(weeks));
+  });
+</script>
