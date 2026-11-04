@@ -8,6 +8,7 @@ import Job from '../components/ExperienceTimeline/Job.astro';
 import OpenSourceTitle from '../components/OpenSourceTitle/index.astro';
 import Boids from '../components/Boids/index.astro';
 import AnimationToggle from '../components/AnimationToggle/index.astro';
+import ContributionGraph from '../components/ContributionGraph/index.astro';
 
 import { RAMP } from '../three/palette';
 
@@ -73,6 +74,8 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
             on features a developer somewhere in the world will use. You'll probably never meet them, but for a moment,
             you're building something together.
           </p>
+
+          <ContributionGraph />
         </div>
       </section>
 
