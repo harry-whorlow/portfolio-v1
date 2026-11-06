@@ -98,7 +98,7 @@ function shouldUpgrade(mbps: number, cached: boolean, qualityOverride: string | 
   return mbps >= UPGRADE_MIN_MBPS;
 }
 
-function decodeHeights(compressed: Uint8Array<ArrayBuffer>, meta: HeightMeta) {
+export function decodeHeights(compressed: Uint8Array<ArrayBuffer>, meta: HeightMeta) {
   return decompress(compressed).then((bytes) => unpackHeights(bytes, meta));
 }
 
@@ -124,7 +124,7 @@ function unpackHeights(bytes: Uint8Array, meta: HeightMeta) {
   return heights;
 }
 
-function createPlanetGeometry(
+export function createPlanetGeometry(
   heights: Int16Array,
   meta: HeightMeta,
   exaggeration: number,

@@ -20,7 +20,9 @@ export function createTopoMaterial(
   minKm: number,
   maxKm: number,
   heatmap: boolean,
-  contourIntervalKm = 0.25
+  contourIntervalKm = 0.25,
+  // pins the thick line to sea level instead of letting it flow every MAJOR_EVERY intervals, to outline the land
+  coastline = false
 ): TopoMaterial {
   const uniforms = {
     uHeightMap: { value: heightMap },
@@ -36,6 +38,7 @@ export function createTopoMaterial(
     uHasColorMap: { value: false },
     uMaterial: { value: false },
     uFillColor: { value: new THREE.Color(FILL_COLOR) },
+    uCoastline: { value: coastline },
   };
 
   const material = new THREE.MeshBasicMaterial() as TopoMaterial;
@@ -71,6 +74,7 @@ export function createTopoMaterial(
         uniform bool uHasColorMap;
         uniform bool uMaterial;
         uniform vec3 uFillColor;
+        uniform bool uCoastline;
         varying vec2 vGridUv;
 
         float heightAt(sampler2D map, ivec2 p, ivec2 size) {
@@ -120,6 +124,13 @@ export function createTopoMaterial(
           float d = abs(fract(t - 0.5) - 0.5) / fwidth(t);
           float halfWidth = 0.5 * width;
           return clamp(min(d + 0.5, halfWidth) - max(d - 0.5, -halfWidth), 0.0, 1.0);
+        }
+
+        // a single line where h crosses zero, the same antialiased profile as contour()
+        float levelLine(float h, float width) {
+          float d = abs(h) / fwidth(h);
+          float halfWidth = 0.5 * width;
+          return clamp(min(d + 0.5, halfWidth) - max(d - 0.5, -halfWidth), 0.0, 1.0);
         }`
       )
       .replace(
@@ -139,7 +150,9 @@ export function createTopoMaterial(
         }
         float lineHeight = vHeight - uContourShift;
         float minorLine = contour(lineHeight, uContourInterval, 0.6);
-        float majorLine = contour(lineHeight, uContourInterval * ${MAJOR_EVERY}.0, 1.2);
+        float majorLine = uCoastline
+          ? levelLine(vHeight, 1.6)
+          : contour(lineHeight, uContourInterval * ${MAJOR_EVERY}.0, 1.2);
         outgoingLight = mix(uFillColor, minorColor, minorLine * 0.6);
         outgoingLight = mix(outgoingLight, baseColor, majorLine);
         #include <opaque_fragment>`

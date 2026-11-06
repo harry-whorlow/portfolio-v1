@@ -9,6 +9,7 @@ import OpenSourceTitle from '../components/OpenSourceTitle/index.astro';
 import Boids from '../components/Boids/index.astro';
 import AnimationToggle from '../components/AnimationToggle/index.astro';
 import ContributionGraph from '../components/ContributionGraph/index.astro';
+import Earth from '../components/Earth/index.astro';
 
 import { RAMP } from '../three/palette';
 
@@ -128,7 +129,7 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
       </section>
     </div>
 
-    <section
+    <!-- <section
       id="fourth-section"
       aria-labelledby="contact-title"
       class="relative flex h-screen flex-col overflow-hidden">
@@ -140,6 +141,10 @@ const progressColors = [RAMP[2], RAMP[4], RAMP[6]];
           <span class="block text-[15vw] uppercase md:text-[10rem]">Together</span>
         </h2>
       </div>
+    </section> -->
+
+    <section id="qualifications" aria-labelledby="qualifications-title" class="relative overflow-hidden">
+      <Earth />
     </section>
   </div>
 

@@ -7,6 +7,8 @@ const DATA_DIR = path.resolve(import.meta.dirname, '../src/three/data');
 const BODIES = {
   moon: { file: 'moon-4096x2048.bin', cols: 4096, rows: 2048, unitsPerKm: 2000, radiusKm: 1737.4 },
   mars: { file: 'mars-4096x2048.bin', cols: 4096, rows: 2048, unitsPerKm: 1000, radiusKm: 3396.19 },
+  // the full-size source lives in the solar-heightmap repo, pass its folder with --source
+  earth: { file: 'earth-4096x2048.bin', cols: 4096, rows: 2048, unitsPerKm: 1000, radiusKm: 6371 },
 };
 
 const { values } = parseArgs({
@@ -15,6 +17,7 @@ const { values } = parseArgs({
     downsample: { type: 'string', default: '1' },
     step: { type: 'string', default: '0.5' }, // metres per stored unit
     name: { type: 'string' },
+    source: { type: 'string' }, // folder holding the source .bin, defaults to src/three/data
   },
 });
 const SOURCE = BODIES[values.body];
@@ -23,7 +26,7 @@ const name = values.name ?? values.body;
 const factor = Number(values.downsample);
 const stepM = Number(values.step);
 
-const raw = fs.readFileSync(path.join(DATA_DIR, SOURCE.file));
+const raw = fs.readFileSync(path.join(values.source ? path.resolve(values.source) : DATA_DIR, SOURCE.file));
 const src = new Int16Array(raw.buffer, raw.byteOffset, raw.length / 2);
 const srcStride = SOURCE.cols + 1;
 const at = (r, c) => {

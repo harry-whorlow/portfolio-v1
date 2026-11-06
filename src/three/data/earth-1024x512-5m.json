@@ -1,0 +1,11 @@
+{
+  "file": "earth-1024x512-5m.bin.gz",
+  "cols": 1024,
+  "rows": 512,
+  "vertexCount": 525825,
+  "format": "int16le-rowdelta-split-gzip",
+  "unitsPerKm": 200,
+  "radiusKm": 6371,
+  "minKm": -8.65,
+  "maxKm": 5.66
+}

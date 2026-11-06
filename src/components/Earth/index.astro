@@ -1,0 +1,562 @@
+---
+import { RAMP } from '../../three/palette';
+
+const buttonColor = RAMP[4];
+---
+
+<div class="earth relative flex min-h-screen flex-col md:flex-row md:items-center" data-earth>
+  <div class="earth-stage">
+    <canvas class="earth-canvas" aria-hidden="true"></canvas>
+    <!-- display marks' labels, always showing; the readout below is for hovering anonymous ones -->
+    <div class="earth-tags" aria-hidden="true" data-tags></div>
+    <div class="earth-readout" aria-hidden="true" hidden data-readout>
+      <span class="earth-readout-city" data-readout-city></span>
+      <span class="earth-readout-count" data-readout-count></span>
+    </div>
+  </div>
+
+  <div class="earth-copy relative p-5 md:p-10">
+    <h2 id="qualifications-title" class="leading-none font-bold">
+      <span class="block text-[9vw] md:text-[5rem]">Leave </span>
+      <span class="block text-[9vw] md:text-[5rem]">Your</span>
+      <span class="text-high block text-[15vw] uppercase md:text-[8rem]">Mark</span>
+    </h2>
+
+    <p class="mt-6 max-w-md text-sm md:text-base" style={`--button-color: ${buttonColor}`}>
+      Say hi from wherever you're reading this <span class="whitespace-nowrap"
+        >from.<button
+          type="button"
+          class="earth-info-button"
+          popovertarget="hello-info"
+          aria-label="How your hello is used"
+          aria-describedby="hello-info"
+          data-info-button>
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="11" x2="12" y2="17"></line>
+            <circle cx="12" cy="7.5" r="0.6" fill="currentColor"></circle>
+          </svg>
+        </button></span
+      >
+      <span id="hello-info" popover class="earth-tooltip">
+        Location is derived from the closest Netlify edge server. Displayed names are subject to review.
+      </span>
+    </p>
+
+    <form class="earth-form mt-8 max-w-sm" style={`--button-color: ${buttonColor}`} data-say-hello>
+      <div class="earth-field">
+        <input
+          id="hello-name"
+          class="earth-input"
+          name="name"
+          type="text"
+          maxlength="50"
+          autocomplete="nickname"
+          spellcheck="false"
+          placeholder=" "
+          data-hello-name
+        />
+        <label for="hello-name" class="earth-label">
+          Name (optional)
+        </label>
+        <button type="submit" class="earth-send" data-hello-send>
+          Say hi
+        </button>
+      </div>
+    </form>
+
+    <p class="mt-6 text-sm opacity-70 md:text-base" data-hello-count aria-live="polite"></p>
+    <ul class="sr-only" aria-label="Hellos by city" data-hello-list></ul>
+    <p class="sr-only" role="status" data-hello-status></p>
+  </div>
+</div>
+
+<style>
+  .earth {
+    --globe-size: min(110svh, 90vw);
+    --globe-visible: 2 / 3;
+  }
+
+  .earth-stage {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: calc(var(--globe-size) * var(--globe-visible));
+    height: var(--globe-size);
+    translate: 0 -50%;
+  }
+
+  .earth-copy {
+    z-index: 1;
+  }
+
+  @media (width < 48rem) {
+    .earth {
+      --globe-size: 130vw;
+    }
+
+    .earth-stage {
+      position: relative;
+      top: auto;
+      align-self: flex-end;
+      translate: none;
+    }
+  }
+
+  .earth-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* the info icon after the tagline; a native popover handles toggling, Escape and tap-outside */
+  .earth-info-button {
+    display: inline-grid;
+    place-items: center;
+    margin-left: 0.15rem;
+    padding: 0.2rem;
+    border-radius: 999px;
+    vertical-align: middle;
+    opacity: 0.7;
+    cursor: help;
+    transition: opacity 0.2s ease;
+    anchor-name: --hello-info;
+  }
+
+  .earth-info-button:hover,
+  .earth-info-button:focus-visible {
+    opacity: 1;
+  }
+
+  .earth-info-button:focus-visible {
+    outline: 2px solid var(--button-color);
+    outline-offset: 2px;
+  }
+
+  /* sits above the icon and shifts to stay on screen; without anchor support it falls back to the viewport centre */
+  .earth-tooltip {
+    position-anchor: --hello-info;
+    position-area: top;
+    position-try-fallbacks: flip-block;
+    margin: 0 0 0.5rem;
+
+    max-width: min(16rem, 70vw);
+    padding: 0.5rem 0.7rem;
+    border: 0;
+    border-left: 3px solid var(--button-color);
+
+    font-family: 'Ingram Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    color: inherit;
+    background: rgb(0 0 0 / 0.85);
+  }
+
+  /* tags are built in the script, so Astro's scoped styles only reach them through :global */
+  .earth-readout,
+  .earth-tags :global(.earth-tag) {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    flex-direction: column;
+    padding: 0.2rem 0.45rem;
+    border-left: 3px solid var(--readout-color, currentColor);
+
+    font-family: 'Ingram Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.15;
+    white-space: nowrap;
+
+    background: rgb(0 0 0 / 0.8);
+    pointer-events: none;
+    translate: 14px -50%;
+  }
+
+  .earth-readout[hidden],
+  .earth-tags :global(.earth-tag[hidden]) {
+    display: none;
+  }
+
+  .earth-tags {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .earth-tags :global(.earth-tag-organisation) {
+    opacity: 0.8;
+  }
+
+  /* the first line leads (a name, or the city when hovering); the lines under it are a step smaller */
+  .earth-tags :global(.earth-tag-organisation),
+  .earth-readout-count,
+  .earth-tags :global(.earth-readout-count) {
+    font-size: 0.65rem;
+  }
+
+  .earth-tags :global(.earth-tag-organisation[hidden]) {
+    display: none;
+  }
+
+  .earth-readout-city,
+  .earth-tags :global(.earth-readout-city) {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .earth-readout-count,
+  .earth-tags :global(.earth-readout-count) {
+    color: var(--readout-color, currentColor);
+  }
+
+  .earth-label {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+
+    padding: 0 0.3rem;
+    border-radius: 0.25rem;
+
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    /* Ingram Mono's line box sits the capitals a touch high; trimming it to the caps centres them exactly */
+    text-box: trim-both cap alphabetic;
+
+    opacity: 0.7;
+    pointer-events: none;
+    translate: 0 -50%;
+    transition:
+      top 0.2s ease,
+      font-size 0.2s ease,
+      color 0.2s ease,
+      opacity 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .earth-input:focus + .earth-label,
+  .earth-input:not(:placeholder-shown) + .earth-label {
+    top: -1px;
+    font-size: 0.7rem;
+    opacity: 1;
+    background-color: var(--theme-bg, #000);
+  }
+
+  .earth-input:focus + .earth-label {
+    color: var(--button-color);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .earth-label {
+      transition: none;
+    }
+  }
+
+  .earth-field {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 0.375rem;
+    padding: 0.375rem;
+    border: 2px solid currentColor;
+    border-radius: 0.5rem;
+    background: rgb(0 0 0 / 0.4);
+    transition: border-color 0.2s ease;
+  }
+
+  .earth-field:focus-within {
+    border-color: var(--button-color);
+  }
+
+  .earth-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.625rem;
+    font-size: 1rem;
+    background: transparent;
+    outline: none;
+  }
+
+  .earth-input:disabled {
+    opacity: 0.5;
+  }
+
+  .earth-send {
+    flex-shrink: 0;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.3rem;
+
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #000;
+    text-box: trim-both cap alphabetic;
+
+    background: var(--button-color);
+    cursor: pointer;
+    transition:
+      filter 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .earth-send:hover:not(:disabled) {
+    filter: brightness(1.15);
+  }
+
+  .earth-send:focus-visible {
+    outline: 2px solid var(--button-color);
+    outline-offset: 3px;
+  }
+
+  .earth-send:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  import type { Mark } from '../../data/marks';
+  import type { Globe, Readout } from '../../three/globe';
+  import { onAnimationsPaused } from '../../utils/animations';
+  import { prefersReducedMotion } from '../../utils/motion';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const VISIBLE_WIDTH = 2 / 3;
+
+  const root = document.querySelector<HTMLElement>('[data-earth]');
+
+  if (root) {
+    const canvas = root.querySelector<HTMLCanvasElement>('.earth-canvas')!;
+    const stage = root.querySelector<HTMLElement>('.earth-stage')!;
+    const form = root.querySelector<HTMLFormElement>('[data-say-hello]')!;
+    const nameInput = root.querySelector<HTMLInputElement>('[data-hello-name]')!;
+    const button = root.querySelector<HTMLButtonElement>('[data-hello-send]')!;
+    const count = root.querySelector<HTMLElement>('[data-hello-count]')!;
+    const status = root.querySelector<HTMLElement>('[data-hello-status]')!;
+    const list = root.querySelector<HTMLUListElement>('[data-hello-list]')!;
+    const readout = root.querySelector<HTMLElement>('[data-readout]')!;
+    const readoutCity = root.querySelector<HTMLElement>('[data-readout-city]')!;
+    const readoutCount = root.querySelector<HTMLElement>('[data-readout-count]')!;
+    const tags = root.querySelector<HTMLElement>('[data-tags]')!;
+    const sendLabel = button.textContent?.trim() || 'Send';
+    const reducedMotion = prefersReducedMotion();
+
+    let hellos: Mark[] = [];
+
+    const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+    // called every frame, so the text only changes when the city does
+    let shown: string | undefined;
+    const showReadout = (next: Readout | null) => {
+      readout.hidden = !next;
+      if (!next) return;
+      const key = `${next.hello.id}:${next.hello.count}`;
+      if (key !== shown) {
+        shown = key;
+        readoutCity.textContent = `${next.hello.city}, ${next.hello.country}`;
+        readoutCount.textContent = plural(next.hello.count, 'hello');
+        readout.style.setProperty('--readout-color', next.color);
+      }
+      readout.style.transform = `translate(${next.x}px, ${next.y}px)`;
+    };
+
+    // one label per display mark (so per name), kept between frames and only rewritten when its details change
+    const tagFor = new Map<
+      string,
+      { el: HTMLElement; name: HTMLElement; organisation: HTMLElement; city: HTMLElement; key?: string }
+    >();
+    const showTags = (labels: Readout[]) => {
+      const seen = new Set<string>();
+      for (const label of labels) {
+        const { hello } = label;
+        seen.add(hello.id);
+        let tag = tagFor.get(hello.id);
+        if (!tag) {
+          const el = document.createElement('div');
+          el.className = 'earth-readout earth-tag';
+          const name = document.createElement('span');
+          name.className = 'earth-readout-city';
+          const organisation = document.createElement('span');
+          organisation.className = 'earth-tag-organisation';
+          const city = document.createElement('span');
+          city.className = 'earth-readout-count';
+          el.append(name, organisation, city);
+          tags.append(el);
+          tag = { el, name, organisation, city };
+          tagFor.set(hello.id, tag);
+        }
+        const key = `${hello.count}:${hello.organisation ?? ''}`;
+        if (key !== tag.key) {
+          tag.key = key;
+          tag.name.textContent = hello.name ?? '';
+          tag.organisation.textContent = hello.organisation ?? '';
+          tag.organisation.hidden = !hello.organisation;
+          // a friend who's said hi more than once gets a count; one hello is just the city
+          tag.city.textContent = `${hello.city}, ${hello.country}${hello.count > 1 ? ` · ${plural(hello.count, 'hello')}` : ''}`;
+          tag.el.style.setProperty('--readout-color', label.color);
+        }
+        tag.el.hidden = false;
+        tag.el.style.transform = `translate(${label.x}px, ${label.y}px)`;
+      }
+      // behind the globe or gone: hide rather than remove, they'll likely come back round
+      for (const [id, tag] of tagFor) if (!seen.has(id)) tag.el.hidden = true;
+    };
+
+    const describe = () => {
+      list.replaceChildren(
+        ...[...hellos]
+          .sort((a, b) => b.count - a.count)
+          .map((hello) => {
+            const item = document.createElement('li');
+            const where = `${hello.city}, ${hello.country}`;
+            item.textContent =
+              hello.type === 'display'
+                ? `${hello.name}${hello.organisation ? ` (${hello.organisation})` : ''} from ${where}: ${plural(hello.count, 'hello')}`
+                : `${where}: ${plural(hello.count, 'hello')}`;
+            return item;
+          })
+      );
+
+      // a city can have an anonymous mark and display marks, so count the places, not the marks
+      const total = hellos.reduce((sum, hello) => sum + hello.count, 0);
+      const cities = new Set(hellos.map((hello) => `${hello.country}:${hello.city}`)).size;
+      count.textContent = total
+        ? `${plural(total, 'hello')} from ${cities} ${cities === 1 ? 'city' : 'cities'}`
+        : 'Nobody has said hello yet. Be the first.';
+    };
+
+    // the half globe slides in from the right edge as the section scrolls up
+    if (reducedMotion) gsap.set(stage, { xPercent: 0, opacity: 1 });
+    else
+      gsap.fromTo(
+        stage,
+        { xPercent: 100, opacity: 0 },
+        {
+          xPercent: 0,
+          opacity: 1,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: root, start: 'top bottom', end: 'top 20%', scrub: true },
+        }
+      );
+
+    // the globe's code and border data only load as the section gets close
+    let globe: Globe | undefined;
+    // rejects if the globe's code fails to load (say a stale chunk after a deploy), so a hello errors, not hangs
+    const loading = new Promise<Globe>((resolve, reject) => {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          observer.disconnect();
+          import('../../three/globe')
+            .then(({ createGlobe }) => {
+              globe = createGlobe(canvas, {
+                reducedMotion,
+                visibleWidth: VISIBLE_WIDTH,
+                onReadout: showReadout,
+                onLabels: showTags,
+              });
+              onAnimationsPaused(globe.setPaused);
+              resolve(globe);
+            })
+            .catch(reject);
+        },
+        { rootMargin: '100% 0px' }
+      );
+      observer.observe(root);
+    });
+
+    Promise.all([loading, fetch('/api/hello.json').then((response) => (response.ok ? response.json() : null))])
+      .then(([globe, data]) => {
+        if (!data) return;
+        // a hello sent while this was in flight may be newer than the list, so keep the higher count per city
+        const merged = new Map((data.hellos as Mark[]).map((hello) => [hello.id, hello]));
+        for (const hello of hellos) {
+          const fetched = merged.get(hello.id);
+          if (!fetched || hello.count > fetched.count) merged.set(hello.id, hello);
+        }
+        hellos = [...merged.values()];
+        describe();
+        // wait until the globe is on screen so the spikes grow in while someone's looking
+        ScrollTrigger.create({ trigger: root, start: 'top 40%', once: true, onEnter: () => globe.setHellos(hellos) });
+      })
+      .catch((error) => console.error('[earth] failed to load the globe or hellos', error));
+
+    // The popover opens on hover and keyboard focus. A tap still toggles it through popovertarget (touch has no
+    // hover), and the native popover keeps Escape and tap-outside closing it.
+    const infoButton = root.querySelector<HTMLButtonElement>('[data-info-button]')!;
+    const infoTip = root.querySelector<HTMLElement>('#hello-info')!;
+    const setTip = (open: boolean) => {
+      if (open === infoTip.matches(':popover-open')) return;
+      if (open) infoTip.showPopover();
+      else infoTip.hidePopover();
+    };
+    let pointerType = '';
+    infoButton.addEventListener('pointerdown', (event) => (pointerType = event.pointerType));
+    infoButton.addEventListener('keydown', () => (pointerType = ''));
+    infoButton.addEventListener('pointerenter', (event) => event.pointerType === 'mouse' && setTip(true));
+    infoButton.addEventListener('pointerleave', (event) => event.pointerType === 'mouse' && setTip(false));
+    infoButton.addEventListener('focus', () => infoButton.matches(':focus-visible') && setTip(true));
+    infoButton.addEventListener('blur', () => setTip(false));
+    // with a mouse, hover already opened it, so a click shouldn't toggle it shut
+    infoButton.addEventListener('click', (event) => pointerType === 'mouse' && event.preventDefault());
+
+    const setSending = (sending: boolean) => {
+      button.disabled = sending;
+      nameInput.disabled = sending;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (button.disabled) return;
+      setSending(true);
+      button.textContent = 'Sending…';
+      try {
+        // the location is added server side from the edge's geolocation, so only the name goes up
+        const response = await fetch('/api/hello.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: nameInput.value.trim() || undefined }),
+        });
+        if (!response.ok) throw new Error(String(response.status));
+        const { hello } = (await response.json()) as { hello: Mark };
+
+        hellos = [...hellos.filter((h) => h.id !== hello.id), hello];
+        button.textContent = 'Incoming…';
+        await (globe ?? (await loading)).land(hello);
+
+        describe();
+        status.textContent = `Hello from ${hello.city} has landed.`;
+        button.textContent = 'Sent';
+        window.posthog?.capture('said_hello', { country: hello.country });
+
+        // in dev the form stays live so the comet can be replayed while working on it
+        if (import.meta.env.DEV) {
+          button.textContent = sendLabel;
+          setSending(false);
+        }
+      } catch {
+        status.textContent = "Couldn't send your hello, try again later.";
+        button.textContent = sendLabel;
+        setSending(false);
+      }
+    });
+  }
+</script>
